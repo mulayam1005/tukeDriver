@@ -51,7 +51,7 @@ const WelcomeScreen = ({navigation}) => {
             {locationIcon ? (
               <Ionicons name="checkbox" size={22} color={colors.hex_f66820} />
             ) : (
-              <MaterialCommunityIcons name="checkbox-blank-outline" size={22} />
+              <Ionicons name="ios-checkbox-sharp" size={22} color='grey' />
             )}
           </TouchableOpacity>
         </View>
@@ -75,7 +75,7 @@ const WelcomeScreen = ({navigation}) => {
             {notificationIcon ? (
               <Ionicons name="checkbox" size={22} color={colors.hex_f66820} />
             ) : (
-              <MaterialCommunityIcons name="checkbox-blank-outline" size={22} />
+              <Ionicons name="ios-checkbox-sharp" size={22} color='grey' />
             )}
           </TouchableOpacity>
         </View>
@@ -114,7 +114,6 @@ const styles = StyleSheet.create({
     height: 25,
     resizeMode: 'contain',
   },
-
   container: {
     flex: 1,
     padding: 25,

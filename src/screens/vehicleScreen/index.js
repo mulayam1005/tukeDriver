@@ -1,43 +1,51 @@
-import {StyleSheet, Text, View, FlatList, Image,TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import CustomHeader from '../../components/CustomHeader';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {h, w} from '../../config';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { VEHICLE_ID } from '../../redux/constants/type';
+import {loader} from '../../redux/actions/loader'
 
-const DATA = [
-  {
-    image: require('../../assets/images/vehicleImage.png'),
-    weight: '500kg',
-    length: '1.8*1.3*1.1cm',
-    area: '2.6cbm',
-  },
-  {
-    image: require('../../assets/images/vehicleImage.png'),
-    weight: '500kg',
-    length: '1.8*1.3*1.1cm',
-    area: '2.6cbm',
-  },
-  {
-    image: require('../../assets/images/vehicleImage.png'),
-    weight: '500kg',
-    length: '1.8*1.3*1.1cm',
-    area: '2.6cbm',
-  },
-  {
-    image: require('../../assets/images/vehicleImage.png'),
-    weight: '500kg',
-    length: '1.8*1.3*1.1cm',
-    area: '2.6cbm',
-  },
-  {
-    image: require('../../assets/images/vehicleImage.png'),
-    weight: '500kg',
-    length: '1.8*1.3*1.1cm',
-    area: '2.6cbm',
-  },
-];
 
-const VehicleScreen = ({navigation}) => {
+const VehicleScreen = (props) => {
+  const [vehicle, setvehicle] = useState('');
+
+  const dispatch = useDispatch()
+  //  const mobile_number = props.route.params.mobile_number
+  
+  useEffect(() => {
+     vehicleList()
+  }, []);
+
+  const vehicleList = () => {
+   dispatch(loader(true))
+    axios
+    .get('http://192.168.0.178:5001/api/VehicleList/VehicleList')
+    .then(function (response) {
+       dispatch(loader(false))
+      setvehicle(response.data.data);
+    })
+    .catch(function (error) {
+      console.log('error===>>', error);
+    
+      dispatch(loader(false))
+    });
+    dispatch({type: VEHICLE_ID,
+        vehicleId: vehicle,
+        // mobile_number : mobile_number
+      });
+
+  }
+
   return (
     <View style={{flex: 1}}>
       <View style={{marginTop: 13}}>
@@ -50,18 +58,33 @@ const VehicleScreen = ({navigation}) => {
         </View>
         <View style={styles.horizontalLine} />
         <FlatList
-        contentContainerStyle={{ paddingBottom: h(10) }}
-          data={DATA}
+          contentContainerStyle={{paddingBottom: h(10)}}
+          data={vehicle}
           renderItem={({item}) => {
+           
             return (
-              <TouchableOpacity onPress={()=>navigation.navigate("VehiclePicture")}>
+              <TouchableOpacity
+                onPress={() => {
+                  props.navigation.navigate('VehiclePicture', {
+                    vehicle_id: item.id,
+                  
+                  });
+                }}>
                 <View style={styles.horizontalItem}>
-                  <Image source={item.image} style={styles.imageStyle} />
+                  <Image
+                    source={{
+                      uri: `data:image/jpg;base64,${item.imageFormat}`
+                  }}
+              
+                    style={styles.imageStyle}
+                  />
                   <View style={styles.container}>
                     <View>
-                      <Text>{item.weight}</Text>
-                      <Text style={styles.vehicleArea}>{item.length}</Text>
-                      <Text>{item.area}</Text>
+                      <Text>{item.vehicle_Weight}</Text>
+                      <Text style={styles.vehicleArea}>
+                        {item.vehicle_length}
+                      </Text>
+                      <Text>{item.other_Specification}</Text>
                     </View>
                     <View style={{marginLeft: w(5)}}>
                       <Ionicons
@@ -86,8 +109,8 @@ export default VehicleScreen;
 
 const styles = StyleSheet.create({
   horizontalLine: {
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
+    borderBottomColor: '#414042',
+    borderBottomWidth: 0.5,
   },
   horizontalItem: {
     width: '100%',
@@ -97,8 +120,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   imageStyle: {
-    width: 180,
-    height: 200,
+    width: 200,
+    height: 110,
     resizeMode: 'contain',
   },
   vehicleArea: {
@@ -118,7 +141,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 18,
-    color: 'black',
+    color: '#414042',
     fontWeight: 'bold',
     textAlign: 'center',
   },

@@ -1,14 +1,23 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React,{useState} from 'react';
 import CommonImagePicker from '../../components/CommonImagePicker';
 import {fs, h, w} from '../../config';
 import CustomHeader from '../../components/CustomHeader';
-const LicenseScreen = ({navigation}) => {
+const LicenseScreen = (props) => {
+  const [licenseImage, setlicenseImage] = useState("")
+
+   const vehicleId = props.route.params.vehicleId
+  // const mobile_number = props.route.params.mobile_number
+
+   const vehicleImage = props.route.params.vehicleImage
+
+
+
   return (
     <View style={styles.container}>
-      <CustomHeader onPress={() => navigation.goBack()} />
+      <CustomHeader onPress={() => props.navigation.goBack()} />
       <Text style={styles.textStyle}>
-        {`Take photo of your\nDrivin License`}
+        {`Take photo of your\nDriving License`}
       </Text>
       <Text
         style={
@@ -17,8 +26,16 @@ const LicenseScreen = ({navigation}) => {
 
       <CommonImagePicker
         isFilled={true}
-        onPress={() => navigation.navigate('ProfileScreen')}
+        getImage={img => setlicenseImage(img.path)}
+        onPress={() => props.navigation.navigate('ProfileScreen',{
+           vehicleId : vehicleId,
+           licenseImage : licenseImage,
+           vehicleImage : vehicleImage
+        })}
         imageStyle={styles.image}
+        image = {licenseImage}
+        disabled = { licenseImage =="" ? true: false}
+        bgColor = { licenseImage =="" ?  false : true}
       />
     </View>
   );

@@ -1,12 +1,16 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React,{useState} from 'react';
 import {colors} from '../constants';
 
 const CommonBtn = props => {
+ 
+  const {image,disabled,bgColor} = props
+ 
   const {text ,onPress,customBtnStyle,customTextStyle} = props;
+
   return (
     <View>
-      <TouchableOpacity style={[styles.btnContainer,customBtnStyle]} onPress={onPress}>
+      <TouchableOpacity style={[styles.btnContainer(bgColor),customBtnStyle]} onPress={onPress} disabled={disabled}>
         <Text style={[styles.btnText,customTextStyle]}>{text}</Text>
       </TouchableOpacity>
     </View>
@@ -16,13 +20,15 @@ const CommonBtn = props => {
 export default CommonBtn;
 
 const styles = StyleSheet.create({
-  btnContainer: {
-    backgroundColor: colors.hex_f56725,
-    padding: 8,
-    borderRadius: 8,
-    width:320,
-    alignSelf:'center'
-  },
+  btnContainer: (item)=>  
+  ({
+        backgroundColor:  item ?  colors.hex_f56725   :  'grey' ,
+        padding: 8,
+        borderRadius: 8,
+        width:320,
+        alignSelf:'center',
+       
+      }),
   btnText: {
     alignSelf: 'center',
     color: colors.hex_f2f2f2,

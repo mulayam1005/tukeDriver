@@ -8,7 +8,7 @@ const CustomHeader = props => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onPress}>
-        <Ionicons name="chevron-back" size={30} />
+        <Ionicons name="chevron-back" size={23} />
       </TouchableOpacity>
     </View>
   );

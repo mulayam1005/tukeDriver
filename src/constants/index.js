@@ -1,6 +1,6 @@
 import {Platform} from 'react-native';
 
-export const BASE_URL = '';
+export const BASE_URL = 'http://192.168.0.178:5001/api/';
 
 export const fontfamily = Platform.select({
   android: {

@@ -3,13 +3,22 @@ import React, {useEffect, useState} from 'react';
 import CommonBtn from './CommonBtn';
 import ImagePicker from 'react-native-image-crop-picker';
 import {fs, h, w} from '../config';
-import { colors } from '../constants';
+import {colors} from '../constants';
 
 const CommonImagePicker = props => {
-  const {isFilled = false, onPress,imageStyle,customBtnStyle} = props;
-  const [cameraImage, setcameraImage] = useState(
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREZ_wL9cp-XNKOszBoha9MKXU8XAoGLD6clg&usqp=CAU',
-  );
+ 
+  const {
+    isFilled = false,
+    onPress,
+    imageStyle,
+    customBtnStyle,
+    getImage=()=>{},
+    image,
+    disabled,
+    bgColor
+  } = props;
+  const [cameraImage, setcameraImage] = useState();
+  const [btndiable, setbtndiable] = useState(false)
   const requestCameraPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -42,22 +51,23 @@ const CommonImagePicker = props => {
       height: 500,
       cropping: true,
     }).then(image => {
-      console.log(image);
+     
       setcameraImage(image.path);
+      getImage(image);
     });
   };
 
   return (
     <View style={styles.container}>
-      <Image source={{uri: cameraImage}} style={[styles.image,imageStyle ]} />
+      <Image source={{uri: cameraImage}} style={[styles.image, imageStyle]} />
       <View style={{marginTop: h(18)}}>
         <CommonBtn
           text="Take Photo"
           customBtnStyle={styles.btn}
-          customTextStyle={{color: 'black'}}
+          customTextStyle={{color: '#414042'}}
           onPress={takePhotoFromCamera}
         />
-        <CommonBtn text={isFilled ? 'Next' : 'Done'} onPress={onPress}  />
+        <CommonBtn text={isFilled ? 'Next' : 'Done'} onPress={onPress} image={image} disabled={disabled} bgColor={bgColor}  />
       </View>
     </View>
   );
@@ -75,6 +85,6 @@ const styles = StyleSheet.create({
     marginBottom: h(4),
   },
   image: {
-     height: h(35),
+    height: h(35),
   },
 });

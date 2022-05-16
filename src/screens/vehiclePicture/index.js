@@ -4,11 +4,30 @@ import CustomHeader from '../../components/CustomHeader';
 import {fs, h, w} from '../../config';
 import CommonImagePicker from '../../components/CommonImagePicker';
 
-const VehiclePicture = ({navigation}) => {
+import {VEHICLE_PHOTO} from '../../redux/constants/type';
+
+const VehiclePicture = props => {
+   const [vehicleImage, setvehicleImage] = useState("")
+  const vehicleId = props.route.params.vehicle_id;
+  // const mobile_number = props.route.params.mobile_number
+
+
+  const takeVehicleImageHandler = () => {
+    props.navigation.navigate('LicenseScreen', {
+      vehicleId: vehicleId,
+      vehicleImage : vehicleImage,
+    });
+    // dispatch({
+    //   type: VEHICLE_PHOTO,
+    //   // vehicleImage: vehicle
+    // });
+  };
+
+  console.log('vehicleImage',vehicleImage)
 
   return (
     <View style={styles.container}>
-      <CustomHeader  onPress={()=>navigation.goBack()} />
+      <CustomHeader onPress={() => props.navigation.goBack()} />
       <Text style={styles.textStyle}>Take photo of your vehicle</Text>
 
       <Text
@@ -16,7 +35,14 @@ const VehiclePicture = ({navigation}) => {
           styles.subheading
         }>{`Please make sure the license plate of your\nvehicle is showing clearly in this photo`}</Text>
 
-      <CommonImagePicker isFilled={true} onPress={()=>navigation.navigate("LicenseScreen")} />
+      <CommonImagePicker
+        isFilled={true}
+        onPress={takeVehicleImageHandler}
+        getImage={img => setvehicleImage(img.path)}
+        image = {vehicleImage}
+        disabled = { vehicleImage =="" ? true: false}
+        bgColor = { vehicleImage =="" ?  false : true}
+      />
     </View>
   );
 };
@@ -30,7 +56,7 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     fontSize: fs(22),
-    color: 'black',
+    color: '#414042',
     alignSelf: 'center',
     marginTop: h(2),
     fontWeight: 'bold',
@@ -40,6 +66,5 @@ const styles = StyleSheet.create({
     marginTop: 33,
     alignSelf: 'center',
     marginBottom: h(5),
-    
   },
 });

@@ -3,15 +3,34 @@ import React from 'react';
 import {w, h, fs} from '../config/index';
 import {colors} from '../constants';
 const CommonInputField = props => {
-  const {placeholder} = props;
+  const {
+    placeholder,
+    value,
+    onChangeText,
+    maxLength,
+    keyboardType,
+    onFocus,
+    warning = false,
+    warningTitle = '',
+    secureTextEntry ,
+    ...remainingProps
+    
+  } = props;
   return (
     <View>
       <TextInput
+        secureTextEntry={secureTextEntry}
         style={styles.inputField}
-        keyboardType="number-pad"
+        keyboardType={keyboardType}
         selectionColor={colors.hex_f66820}
         placeholder={placeholder}
+        value={value}
+        onChangeText={onChangeText}
+        maxLength ={maxLength}
+        onFocus = {onFocus}
+        {...remainingProps}
       />
+          {warning ? <Text style={styles.textWarning}>{warningTitle}</Text> : null}
     </View>
   );
 };
@@ -26,4 +45,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingLeft:w(4)
   },
+  textWarning: {color: 'red',  marginLeft: w(5)},
 });

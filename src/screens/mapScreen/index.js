@@ -12,6 +12,7 @@ import {fs, h, w} from '../../config';
 import CommonBtn from '../../components/CommonBtn';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {colors} from '../../constants';
+import axios from 'axios';
 
 var screenWidth = Dimensions.get('window').width;
 
@@ -19,34 +20,47 @@ const MapScreen = ({navigation}) => {
   const [bgColorOn, setbgColorOn] = useState(true);
   const [bgColorOff, setbgColorOff] = useState(true);
 
-  const currIndex = useRef(0);
 
-  const onClickOffBtn = () => {
-   
-  };
 
-  const onClickOnBtn = () => {
-
-  };
+ 
 
   const onClickBtn = () => {
     setbgColorOn(!bgColorOn);
     setbgColorOff(bgColorOn);
-    // currIndex.current += 1;
-    // this.scroll.scrollTo({x: screenWidth * currIndex.current});
+    axios
+    .post('http://192.168.0.178:5001/api/DriverDetails/UpdateDriver_IsAvailable', {
+      mobile_No: '9977106335',
+      isAvailable: true
+    })
+    .then(function (response) {
+      console.log('...response...',response)
+      // props.navigation.navigate('MapScreen');
+    })
+    .catch(function (error) {
+      console.log('error===>>', error);
+    });
   };
 
   const ofClickBtn = () => {
     setbgColorOff(!bgColorOff);
     setbgColorOn(bgColorOff);
-    // currIndex.current -= 1;
-    // this.scroll.scrollTo({x: screenWidth * currIndex.current});
+    axios
+    .post('http://192.168.0.178:5001/api/DriverDetails/UpdateDriver_IsAvailable', {
+      mobile_No: '9977106335',
+      isAvailable: false
+    })
+    .then(function (response) {
+      console.log('...response...false',response)
+      // props.navigation.navigate('MapScreen');
+    })
+    .catch(function (error) {
+      console.log('error===>>', error);
+    });
   };
 
-  // useEffect(() => {
-  //   setbgColorOn(true);
-  //   setbgColorOff(true);
-  // }, []);
+
+
+ 
 
   return (
     <View style={{flex: 1}}>
@@ -135,7 +149,7 @@ const styles = StyleSheet.create({
   },
   orderText: {
     fontSize: fs(22),
-    color: 'black',
+    color: '#414042',
     fontWeight: 'bold',
   },
   availablity: {

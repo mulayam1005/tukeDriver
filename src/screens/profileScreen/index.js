@@ -4,7 +4,7 @@ import CustomHeader from '../../components/CustomHeader';
 import {fs, h, w} from '../../config';
 import CommonImagePicker from '../../components/CommonImagePicker';
 import axios from 'axios';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import ImgToBase64 from 'react-native-image-base64';
 import { loader } from '../../redux/actions/loader';
@@ -19,6 +19,8 @@ const ProfileScreen = props => {
   const licenseImage = props.route.params.licenseImage;
   const vehicleImage = props.route.params.vehicleImage;
  
+
+  const dispatch = useDispatch()
   // ImgToBase64.getBase64String(licenseImage)
   // .then(base64String => setlbase64(base64String) )
   // .catch(err => console.error(err));
@@ -38,7 +40,7 @@ const ProfileScreen = props => {
   
   // const mobile_number = props.route.params.mobile_number
   const onDoneHandler = () => {
-    
+    dispatch(loader(true))
     axios
       .post('http://192.168.0.178:5001/api/DriverDetails/UpdateDriverDetails', {
         mobile_No: '9977106335',
@@ -49,10 +51,15 @@ const ProfileScreen = props => {
       })
       .then(function (response) {
         console.log('response...',response)
-        props.navigation.navigate('MapScreen');
+         if(response.status == 200){
+           dispatch(loader(false))
+           props.navigation.navigate('MapScreen');
+         }
+       
       })
       .catch(function (error) {
         console.log('error===>>', error);
+        dispatch(loader(false))
       });
   };
 

@@ -29,7 +29,7 @@ const VehicleScreen = (props) => {
   const vehicleList = () => {
    dispatch(loader(true))
     axios
-    .get('http://192.168.0.178:5001/api/VehicleList/VehicleList')
+    .get('http://tuketuke.azurewebsites.net/api/VehicleList/VehicleList')
     .then(function (response) {
        dispatch(loader(false))
       setvehicle(response.data.data);
@@ -73,7 +73,7 @@ const VehicleScreen = (props) => {
                 <View style={styles.horizontalItem}>
                   <Image
                     source={{
-                      uri: `data:image/jpg;base64,${item.imageFormat}`
+                      uri: `https://driverfiles.blob.core.windows.net/driverfiles/${item.image_Url}`,
                   }}
               
                     style={styles.imageStyle}
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   imageStyle: {
     width: 200,
     height: 110,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
   vehicleArea: {
     marginTop: 3,

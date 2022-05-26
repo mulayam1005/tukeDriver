@@ -21,6 +21,7 @@
     "react-native": "0.68.1",
     "react-native-confirmation-code-field": "^7.3.0",
     "react-native-encrypted-storage": "^4.0.2",
+    "react-native-fast-image": "^8.5.11",
     "react-native-image-base64": "^0.1.4",
     "react-native-image-crop-picker": "^0.37.3",
     "react-native-maps": "^0.30.1",

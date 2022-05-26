@@ -14,6 +14,8 @@ import CommonBtn from '../../components/CommonBtn';
 import CustomHeader from '../../components/CustomHeader';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
+import {loader} from '../../redux/actions/loader'
+import { useDispatch } from 'react-redux';
 
 
 
@@ -21,7 +23,7 @@ const LoginScreen = ({navigation}) => {
   const [number, setnumber] = useState('');
   const [isError, setIsError] = useState(false);
 
-
+  const dispatch = useDispatch()
   
 
   const onConfirmHandler = async () => {
@@ -30,9 +32,10 @@ const LoginScreen = ({navigation}) => {
     
     } else {
       setIsError(false);
+      dispatch(loader(true))
       axios
         .get(
-          `http://192.168.0.178:5001/api/Login/CheckUserDriver?Mobile_No=${number}`,
+          `http://tuketuke.azurewebsites.net/api/Login/CheckUserDriver?Mobile_No=${number}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -42,10 +45,12 @@ const LoginScreen = ({navigation}) => {
         // axios
         //   .get('http://192.168.0.178:5001/api/Login/CheckUserDriver')
         .then(function (response) {
+          dispatch(loader(false))
           console.log('respons===>>', response);
           navigation.navigate('OtpScreen');
         })
         .catch(function (error) {
+          dispatch(loader(false))
           alert("phone number not found")
         });
     }
@@ -133,7 +138,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginBtn: {
-    width: 355,
+    width: 328,
     padding: 11,
     backgroundColor:colors.hex_f66820
   },

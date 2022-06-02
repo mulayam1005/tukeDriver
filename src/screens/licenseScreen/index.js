@@ -1,17 +1,15 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React,{useState} from 'react';
+import React, {useState, useContext} from 'react';
 import CommonImagePicker from '../../components/CommonImagePicker';
 import {fs, h, w} from '../../config';
 import CustomHeader from '../../components/CustomHeader';
-const LicenseScreen = (props) => {
-  const [licenseImage, setlicenseImage] = useState("")
+import {ApplicationContext} from '../../utils/context';
 
-   const vehicleId = props.route.params.vehicleId
-  // const mobile_number = props.route.params.mobile_number
+const LicenseScreen = props => {
+  const [licenseImage, setlicenseImage] = useState('');
+  const [appData, setAppData] = useContext(ApplicationContext);
 
-   const vehicleImage = props.route.params.vehicleImage
-
-
+  console.log('appData======>>>', appData);
 
   return (
     <View style={styles.container}>
@@ -26,16 +24,12 @@ const LicenseScreen = (props) => {
 
       <CommonImagePicker
         isFilled={true}
-        getImage={img => setlicenseImage(img.path)}
-        onPress={() => props.navigation.navigate('ProfileScreen',{
-           vehicleId : vehicleId,
-           licenseImage : licenseImage,
-           vehicleImage : vehicleImage
-        })}
+        getImage={img => setAppData({...appData, licences_Photo: img.path})}
+        onPress={() => props.navigation.navigate('ProfileScreen')}
         imageStyle={styles.image}
-        image = {licenseImage}
-        disabled = { licenseImage =="" ? true: false}
-        bgColor = { licenseImage =="" ?  false : true}
+        image={appData.licences_Photo}
+        disabled={appData.licences_Photo == '' ? true : false}
+        bgColor={appData.licences_Photo == '' ? false : true}
       />
     </View>
   );

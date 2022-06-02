@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "215111408715-9b27npir7ji6imm9mrf2h61g1mq0md4h.apps.googleusercontent.com",
+          "client_id": "215111408715-isq20p5lo5i4lhvs02etfh693crrhks7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.tukedrive",
-            "certificate_hash": "65c8d3825f6a3aa56f84351832ab0ad134b3e7a0"
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {

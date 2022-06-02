@@ -1,57 +1,62 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {colors, images} from '../../constants';
 import CommonInputField from '../../components/CommonInputField';
-import {h, regx, w} from '../../config';
+import {fs, h, regx, w} from '../../config';
 import CommonBtn from '../../components/CommonBtn';
 import CustomHeader from '../../components/CustomHeader';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import {loader} from '../../redux/actions/loader'
-import { useDispatch } from 'react-redux';
-
-
+import {useDispatch} from 'react-redux';
+import {loader} from '../../redux/actions/loader';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 const LoginScreen = ({navigation}) => {
-  const [number, setnumber] = useState('');
+  const [number, setnumber] = useState('9874563000');
   const [isError, setIsError] = useState(false);
 
-  const dispatch = useDispatch()
-  
+  const dispatch = useDispatch();
 
   const onConfirmHandler = async () => {
     if (!number) {
       setIsError(true);
-    
     } else {
-      setIsError(false);
-      dispatch(loader(true))
-      axios
-        .get(
-          `http://tuketuke.azurewebsites.net/api/Login/CheckUserDriver?Mobile_No=${number}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        )
-        // axios
-        //   .get('http://192.168.0.178:5001/api/Login/CheckUserDriver')
+      dispatch(loader(true));
+      axios({
+        url: `http://tuketuke.azurewebsites.net/api/Login/SMSNotification?Mobile_No=%2B91${number}`,
+        method: 'post',
+        headers: {
+          // Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
         .then(function (response) {
-          dispatch(loader(false))
-          console.log('respons===>>', response);
-          navigation.navigate('OtpScreen');
+          if (response.status == 200) {
+            const {data} = response;
+
+            if (data.status == 'Success') {
+              dispatch(loader(false));
+
+              navigation.navigate('OtpScreen', {
+                loginData: data.data,
+                mobileNo: number,
+              });
+            } else {
+              dispatch(loader(false));
+              alert(data.message);
+            }
+          } else {
+            dispatch(loader(false));
+            alert(response.statusText);
+          }
         })
         .catch(function (error) {
-          dispatch(loader(false))
-          alert("phone number not found")
+          dispatch(loader(false));
+          showMessage({
+            message: 'Phone number not found',
+            description: 'Please enter valid number',
+            type: 'danger',
+            style: {padding: 93},
+          });
         });
     }
   };
@@ -78,20 +83,27 @@ const LoginScreen = ({navigation}) => {
               : `Please enter your valid mobile number!`
           }
           warning={
-            !number
-              ? isError
-              : number && !regx.phoneLastTen.test(number)
+            !number ? isError : number && !regx.phoneLastTen.test(number)
           }
         />
       </View>
       <Text style={styles.otpSendText}>
-        {' '}
         We will send you verification to this number
       </Text>
-      <CommonBtn text="Confirm" onPress={onConfirmHandler} customBtnStyle={styles.loginBtn} />
+      <CommonBtn
+        text="Confirm"
+        onPress={onConfirmHandler}
+        customBtnStyle={{
+          padding: 12,
+          width: 350,
+          backgroundColor: colors.hex_f56725,
+        }}
+      />
       <TouchableOpacity
         onPress={() => navigation.navigate('LoginWithPassword')}>
-        <Text style={styles.passwordText}>Login with a password </Text>
+        <Text style={{textAlign: 'center', marginTop: h(2), fontSize: fs(16)}}>
+          Login with a password{' '}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -131,15 +143,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 20,
     marginBottom: 25,
+    fontSize: 15,
   },
   passwordText: {
     alignSelf: 'center',
     marginTop: 22,
     fontSize: 16,
-  },
-  loginBtn: {
-    width: 328,
-    padding: 11,
-    backgroundColor:colors.hex_f66820
   },
 });

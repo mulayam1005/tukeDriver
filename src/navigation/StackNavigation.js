@@ -55,10 +55,10 @@ const StackNavigation = () => {
     tokenUser();
   }, []);
   const tokenUser = async () => {
-    var userToken = '111';
+    var userToken = null;
     try {
       userToken = await EncryptedStorage.getItem('user_session');
-      console.log('tkn', userToken);
+      console.log('userToken:id ', userToken);
       dispatch({type: 'RESTORE_TOKEN', token: userToken});
     } catch (error) {
       console.log('error==>>', error);
@@ -68,9 +68,9 @@ const StackNavigation = () => {
   const authContext = useMemo(
     () => ({
       signIn: async res => {
-        const token = res.data.token;
+        console.log('response====>>4', res);
+        const token = res.token;
         await EncryptedStorage.setItem('user_session', token);
-
         dispatch({type: 'SIGN_IN', token: token});
       },
     }),
@@ -91,13 +91,13 @@ const StackNavigation = () => {
                 component={LoginWithPassword}
               />
               <Auth.Screen name="OtpScreen" component={OtpScreen} />
-            </>
-          ) : (
-            <>
               <Stack.Screen name="VehicleScreen" component={VehicleScreen} />
               <Stack.Screen name="VehiclePicture" component={VehiclePicture} />
               <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
               <Stack.Screen name="LicenseScreen" component={LicenseScreen} />
+            </>
+          ) : (
+            <>
               <Stack.Screen name="MapScreen" component={MapScreen} />
               <Stack.Screen name="OrderScreen" component={OrderScreen} />
             </>
@@ -124,4 +124,3 @@ const StackNavigation = () => {
 };
 
 export default StackNavigation;
-

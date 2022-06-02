@@ -1,29 +1,19 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import CustomHeader from '../../components/CustomHeader';
 import {fs, h, w} from '../../config';
 import CommonImagePicker from '../../components/CommonImagePicker';
-
+import {ApplicationContext} from '../../utils/context';
 import {VEHICLE_PHOTO} from '../../redux/constants/type';
 
 const VehiclePicture = props => {
-   const [vehicleImage, setvehicleImage] = useState("")
-  const vehicleId = props.route.params.vehicle_id;
-  // const mobile_number = props.route.params.mobile_number
-
+  const [appData, setAppData] = useContext(ApplicationContext);
 
   const takeVehicleImageHandler = () => {
-    props.navigation.navigate('LicenseScreen', {
-      vehicleId: vehicleId,
-      vehicleImage : vehicleImage,
-    });
-    // dispatch({
-    //   type: VEHICLE_PHOTO,
-    //   // vehicleImage: vehicle
-    // });
+    props.navigation.navigate('LicenseScreen');
   };
 
-  console.log('vehicleImage',vehicleImage)
+  console.log('appData======>>>', appData);
 
   return (
     <View style={styles.container}>
@@ -38,10 +28,10 @@ const VehiclePicture = props => {
       <CommonImagePicker
         isFilled={true}
         onPress={takeVehicleImageHandler}
-        getImage={img => setvehicleImage(img.path)}
-        image = {vehicleImage}
-        disabled = { vehicleImage =="" ? true: false}
-        bgColor = { vehicleImage =="" ?  false : true}
+        getImage={img => setAppData({...appData, vehicle_Photo: img.path})}
+        image={appData.vehicle_Photo}
+         disabled={appData.vehicle_Photo == '' ? true : false }
+         bgColor={appData.vehicle_Photo == '' ? false : true}
       />
     </View>
   );

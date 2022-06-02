@@ -6,45 +6,38 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import CustomHeader from '../../components/CustomHeader';
+import React, {useContext, useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {h, w} from '../../config';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { VEHICLE_ID } from '../../redux/constants/type';
-import {loader} from '../../redux/actions/loader'
+import {useDispatch} from 'react-redux';
+import {loader} from '../../redux/actions/loader';
+import {ApplicationContext} from '../../utils/context';
 
-
-const VehicleScreen = (props) => {
+const VehicleScreen = props => {
   const [vehicle, setvehicle] = useState('');
+  const [appData, setAppData] = useContext(ApplicationContext);
 
-  const dispatch = useDispatch()
-  //  const mobile_number = props.route.params.mobile_number
-  
+  const dispatch = useDispatch();
+
   useEffect(() => {
-     vehicleList()
+    vehicleList();
   }, []);
 
   const vehicleList = () => {
-   dispatch(loader(true))
+    dispatch(loader(true));
     axios
-    .get('http://tuketuke.azurewebsites.net/api/VehicleList/VehicleList')
-    .then(function (response) {
-       dispatch(loader(false))
-      setvehicle(response.data.data);
-    })
-    .catch(function (error) {
-      console.log('error===>>', error);
-    
-      dispatch(loader(false))
-    });
-    dispatch({type: VEHICLE_ID,
-        vehicleId: vehicle,
-        // mobile_number : mobile_number
-      });
+      .get('http://tuketuke.azurewebsites.net/api/VehicleList/VehicleList')
+      .then(function (response) {
+        dispatch(loader(false));
+        setvehicle(response.data.data);
+      })
+      .catch(function (error) {
+        console.log('error===>>', error);
 
-  }
+        dispatch(loader(false));
+      });
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -60,22 +53,23 @@ const VehicleScreen = (props) => {
         <FlatList
           contentContainerStyle={{paddingBottom: h(10)}}
           data={vehicle}
-          renderItem={({item}) => {
-           
+          renderItem={({item, index}) => {
+            console.log('index-===>>', index);
             return (
               <TouchableOpacity
                 onPress={() => {
-                  props.navigation.navigate('VehiclePicture', {
-                    vehicle_id: item.id,
-                  
+                  setAppData({
+                    ...appData,
+                    vehicle_Id: item.id,
+                    vehicle_No: index + 1,
                   });
+                  props.navigation.navigate('VehiclePicture');
                 }}>
                 <View style={styles.horizontalItem}>
                   <Image
                     source={{
                       uri: `https://driverfiles.blob.core.windows.net/driverfiles/${item.image_Url}`,
-                  }}
-              
+                    }}
                     style={styles.imageStyle}
                   />
                   <View style={styles.container}>

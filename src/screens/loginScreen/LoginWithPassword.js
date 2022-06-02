@@ -22,9 +22,11 @@ import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 import {_checkInternet} from '../../utils/internet';
 import NoInternet from '../../components/NoInternet';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 const LoginWithPassword = ({navigation}) => {
   const [number, setnumber] = useState('');
+  const [fcId, setfcId] = useState("")
   const [password, setpassword] = useState('');
   const [isError, setIsError] = useState(false);
   const [isNet, setIsNet] = useState(true);
@@ -34,7 +36,15 @@ const LoginWithPassword = ({navigation}) => {
   const dispatch = useDispatch();
 
   const onConfirmHandler = async () => {
-    // signIn('0000')
+    try {   
+      const session = await EncryptedStorage.getItem("fcm_id");
+      setfcId(session)
+      if (session !== undefined) {
+          // Congrats! You've just retrieved your first value!
+      }
+  } catch (error) {
+    console.log('error',error)
+  }
     if (!password || !number) {
       setIsError(true);
     } else {
@@ -44,98 +54,110 @@ const LoginWithPassword = ({navigation}) => {
         dispatch(loader(true));
         setIsError(false);
         axios
-          .post('http://192.168.0.178:5001/api/Login/DriverLogin', {
+          .post('http://tuketuke.azurewebsites.net/api/Login/DriverLogin', {
             password: password,
             mobile_No: number,
+            fcM_Id: fcId,
           })
           .then(async function (response) {
-            console.log('resonse===>>', response);
+            console.log('resonse999', response.data);
             dispatch(loader(false));
             if (response.status == 200) {
               dispatch(loader(false));
-              signIn(response);
+              try {
+                await EncryptedStorage.setItem(
+                  'user_signin',
+                  JSON.stringify({
+                    signData: response.data,
+                  }),
+                );
+              } catch (error) {
+                console.log('error user_signInPassword',error)
+              }
+               navigation.navigate("VehicleScreen")
             }
-            // const Token = response.data.token;
-            // console.log('Token', Token);
-            // navigation.navigate('VehicleScreen');
             try {
               await EncryptedStorage.setItem('user_session', Token);
-
-              // Congrats! You've just stored your first value!
-            } catch (error) {
-              // There was an error on the native side
-            }
+            } catch (error) {}
           })
           .catch(function (error) {
-            alert('please enter valid credientails');
+            showMessage({
+              message: 'Please enter valid crediential',
+              type: 'danger',
+            });
             dispatch(loader(false));
           });
         dispatch({type: MOBILE_NUMBER, moblieNumber: number});
       } else {
         setIsNet(false);
-        Alert.alert('Oops! Check your Internet Connection');
+        showMessage({
+          message: 'Oops! Check your Internet Connection',
+          type: 'danger',
+        });
       }
     }
   };
 
   return (
     <>
-    {isNet  ?
-    <View style={styles.container}>
-      <CustomHeader onPress={() => navigation.goBack()} />
-      <View style={{marginTop: 40}}>
-        <View style={styles.headingView}>
-          <Text style={styles.headingText}>Enter your number</Text>
-        </View>
-        <CommonInputField
-          placeholder="Enter your phone number"
-          value={number}
-          onChangeText={data => setnumber(data)}
-          maxLength={10}
-          keyboardType={'numeric'}
-          warningTitle={
-            !number
-              ? `Mobile Number is required`
-              : `Please enter your valid mobile number!`
-          }
-          warning={
-            !number ? isError : number && !regx.phoneLastTen.test(number)
-          }
-        />
-        <View style={{marginTop: 22}}>
-          <CommonInputField
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={data => setpassword(data)}
-            maxLength={10}
-            secureTextEntry={true}
-            warningTitle={!password ? `Password is required.` : ``}
-            warning={!password ? isError : password}
-          />
-        </View>
-      </View>
+      {isNet ? (
+        <View style={styles.container}>
+          <CustomHeader onPress={() => navigation.goBack()} />
+          <View style={{marginTop: 40}}>
+            <View style={styles.headingView}>
+              <Text style={styles.headingText}>Enter your number</Text>
+            </View>
+            <CommonInputField
+              placeholder="Enter your phone number"
+              value={number}
+              onChangeText={data => setnumber(data)}
+              maxLength={10}
+              keyboardType={'numeric'}
+              warningTitle={
+                !number
+                  ? `Mobile Number is required`
+                  : `Please enter your valid mobile number!`
+              }
+              warning={
+                !number ? isError : number && !regx.phoneLastTen.test(number)
+              }
+            />
+            <View style={{marginTop: 22}}>
+              <CommonInputField
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={data => setpassword(data)}
+                maxLength={10}
+                secureTextEntry={true}
+                warningTitle={!password ? `Password is required.` : ``}
+                warning={!password ? isError : password}
+              />
+            </View>
+          </View>
 
-      <View style={{marginTop: 48}}>
-        <CommonBtn
-          text="Confirm"
-          onPress={onConfirmHandler}
-          customBtnStyle={{
-            padding: 11,
-            width: 355,
-            backgroundColor: colors.hex_f56725,
-          }}
-        />
-      </View>
-      <View style={styles.confirmBtn}>
-        <TouchableOpacity>
-          <Text style={{fontSize: 16}}>Register</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={{fontSize: 16}}>Forgot password</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-     : <NoInternet  /> }
+          <View style={{marginTop: 48}}>
+            <CommonBtn
+              text="Confirm"
+              onPress={onConfirmHandler}
+              customBtnStyle={{
+                padding: 11,
+                width: 355,
+                backgroundColor: colors.hex_f56725,
+              }}
+            />
+          </View>
+          <View style={styles.confirmBtn}>
+            <TouchableOpacity>
+              <Text style={{fontSize: 16}}>Register</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={{fontSize: 16}}>Forgot password</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <NoInternet />
+      )}
     </>
   );
 };

@@ -18,8 +18,12 @@ import MapViewDirections from 'react-native-maps-directions';
 var screenWidth = Dimensions.get('window').width;
 
 const MapScreen = ({navigation}) => {
+  const [driverStatus, setDriverStatus] = useState(false);
+  const [isOrderExist, setIsOrderExist] = useState(false);
+  const [confirmDriverStatus, setConfirmDriverStatus] = useState(false);
   const [bgColorOn, setbgColorOn] = useState(true);
-  const [bgColorOff, setbgColorOff] = useState(true);
+  const [bgColorOff, setbgColorOff] = useState(false);
+
   const [mapLocation, setmapLocation] = useState({
     pickupcords: {
       latitude: 22.7244,
@@ -35,6 +39,15 @@ const MapScreen = ({navigation}) => {
     },
   });
 
+  useEffect(() => {
+    if (driverStatus) {
+      setTimeout(() => {
+        setIsOrderExist(true)
+      }, 10000);
+    }
+    return clearTimeout();
+  }, [driverStatus]);
+
   const mapRef = useRef();
   console.log('mapRef====>>>', mapRef);
   const {pickupcords, droplocationcords} = mapLocation;
@@ -42,26 +55,29 @@ const MapScreen = ({navigation}) => {
   const onClickBtn = () => {
     setbgColorOn(!bgColorOn);
     setbgColorOff(bgColorOn);
-    axios
-      .post(
-        'http://192.168.0.178:5001/api/DriverDetails/UpdateDriver_IsAvailable',
-        {
-          mobile_No: '9977106335',
-          isAvailable: true,
-        },
-      )
-      .then(function (response) {
-        console.log('...response...', response);
-        // props.navigation.navigate('MapScreen');
-      })
-      .catch(function (error) {
-        console.log('error===>>', error);
-      });
+
+    // axios
+    //   .post(
+    //     'http://192.168.0.178:5001/api/DriverDetails/UpdateDriver_IsAvailable',
+    //     {
+    //       mobile_No: '9977106335',
+    //       isAvailable: true,
+    //     },
+    //   )
+    //   .then(function (response) {
+    //     console.log('...response...', response);
+    //    props.navigation.navigate('OrderScreen');
+    //   })
+    //   .catch(function (error) {
+    //     console.log('error===>>', error);
+    //   });
+    // navigation.navigate('OrderScreen');
   };
 
   const ofClickBtn = () => {
     setbgColorOff(!bgColorOff);
     setbgColorOn(bgColorOff);
+
     axios
       .post(
         'http://192.168.0.178:5001/api/DriverDetails/UpdateDriver_IsAvailable',
@@ -79,6 +95,7 @@ const MapScreen = ({navigation}) => {
       });
   };
 
+  const onChangeDriverStatus = async () => {};
   return (
     <View style={{flex: 1}}>
       <View style={styles.container}>
@@ -86,70 +103,84 @@ const MapScreen = ({navigation}) => {
         <Text style={styles.headerHeading}>Select vehicle</Text>
         <View />
       </View>
-      <View style={styles.mapContainer}>
-      <MapView
-      // provider='AIzaSyBzhsIqqHLkDrRiSqt94pxHJCdHHXgA464' // remove if not using Google Maps
-      ref={mapRef}
-      style={styles.map}
-      region={pickupcords}>
-      <Marker coordinate={pickupcords} />
-      <Marker coordinate={droplocationcords} />
-      <MapViewDirections
-        origin={pickupcords}
-        destination={droplocationcords}
-        apikey={'AIzaSyBzhsIqqHLkDrRiSqt94pxHJCdHHXgA464'}
-        strokeWidth={8}
-        strokeColor="red"
-        optimizeWaypoints={true}
-        onReady={result => {
-          mapRef.current.fitToCoordinates(result.coordinate, {
-            edgePadding: {
-              right: 30,
-              bottom: 300,
-              left: 30,
-              top: 100,
-            },
-          });
-        }}
-      />
-    </MapView>
+      <View
+        style={[
+          styles.mapContainer,
+          {
+            height: driverStatus ? '90%' : confirmDriverStatus ? '60%' : '90%',
+          },
+        ]}>
+        <MapView
+          // provider='AIzaSyBzhsIqqHLkDrRiSqt94pxHJCdHHXgA464' // remove if not using Google Maps
+          ref={mapRef}
+          style={styles.map}
+          region={pickupcords}>
+          <Marker coordinate={pickupcords} />
+          <Marker coordinate={droplocationcords} />
+          <MapViewDirections
+            origin={pickupcords}
+            destination={droplocationcords}
+            apikey={'AIzaSyBzhsIqqHLkDrRiSqt94pxHJCdHHXgA464'}
+            strokeWidth={8}
+            strokeColor="red"
+            optimizeWaypoints={true}
+            onReady={result => {
+              mapRef.current.fitToCoordinates(result.coordinate, {
+                edgePadding: {
+                  right: 30,
+                  bottom: 300,
+                  left: 30,
+                  top: 100,
+                },
+              });
+            }}
+          />
+        </MapView>
       </View>
-      <View style={styles.orderView}>
-        <Text
-          style={
-            styles.orderText
-          }>{`Are you available to recieve\norders Now?`}</Text>
-        <Text
-          style={
-            styles.automatic
-          }>{`Available orders will be pushed to you\nautomatically`}</Text>
-      </View>
+      {confirmDriverStatus && (
+        <View style={styles.orderView}>
+          <Text
+            style={
+              styles.orderText
+            }>{`Are you available to recieve\norders Now?`}</Text>
+          <Text
+            style={
+              styles.automatic
+            }>{`Available orders will be pushed to you\nautomatically`}</Text>
+        </View>
+      )}
       <View style={styles.availablity} />
       <View style={{flex: 1, justifyContent: 'flex-end'}}>
-        <Text style={styles.slideTurn}> Slide to turn on Availablity</Text>
+        {/* <Text style={styles.slideTurn}> Slide to turn on Availablity</Text> */}
         <View style={styles.btnContainer}>
           <View style={styles.btnBackground}>
             <CommonBtn
               text="ON"
               customBtnStyle={[
                 styles.btnStyle,
-                {backgroundColor: bgColorOn ? '#989898' : colors.hex_f66820},
+                {backgroundColor: driverStatus ? colors.hex_f66820 : '#989898'},
               ]}
-              onPress={onClickBtn}
+              onPress={() => {
+                if (confirmDriverStatus) {
+                  setConfirmDriverStatus(false);
+                  setDriverStatus(true);
+                } else {
+                  setConfirmDriverStatus(true);
+                }
+              }}
             />
             <CommonBtn
               text="OFF"
               customBtnStyle={[
                 styles.btnStyle,
-                {backgroundColor: bgColorOff ? '#989898' : colors.hex_f66820},
+                {backgroundColor: driverStatus ? '#989898' : colors.hex_f66820},
               ]}
-              onPress={ofClickBtn}
+              onPress={() => setDriverStatus(false)}
             />
           </View>
         </View>
       </View>
     </View>
-   
   );
 };
 
@@ -173,7 +204,7 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     width: '100%',
-    height: '50%',
+    height: '60%',
     marginTop: h(1),
   },
   orderView: {
@@ -218,7 +249,3 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
 });
-
-
-
-

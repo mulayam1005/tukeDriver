@@ -42,7 +42,7 @@ const MapScreen = ({navigation}) => {
   useEffect(() => {
     if (driverStatus) {
       setTimeout(() => {
-        setIsOrderExist(true)
+        setIsOrderExist(true);
       }, 10000);
     }
     return clearTimeout();
@@ -80,22 +80,26 @@ const MapScreen = ({navigation}) => {
 
     axios
       .post(
-        'http://192.168.0.178:5001/api/DriverDetails/UpdateDriver_IsAvailable',
+        'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateDriverLatLngInOrder',
         {
-          mobile_No: '9977106335',
-          isAvailable: false,
+          order_No: 10001,
+          driverLat: '22.785',
+          driverLng: '75.345',
         },
       )
       .then(function (response) {
-        console.log('...response...false', response);
+        console.log('...response...false', response.data);
         // props.navigation.navigate('MapScreen');
       })
       .catch(function (error) {
         console.log('error===>>', error);
       });
   };
+  console.log(
+    'driverStatus ',
+    driverStatus ? '90%' : confirmDriverStatus ? '60%' : '90%',
+  );
 
-  const onChangeDriverStatus = async () => {};
   return (
     <View style={{flex: 1}}>
       <View style={styles.container}>
@@ -107,7 +111,7 @@ const MapScreen = ({navigation}) => {
         style={[
           styles.mapContainer,
           {
-            height: driverStatus ? '90%' : confirmDriverStatus ? '60%' : '90%',
+            // height: driverStatus ? '90%' : confirmDriverStatus ? '60%' : '90%',
           },
         ]}>
         <MapView
@@ -161,12 +165,12 @@ const MapScreen = ({navigation}) => {
                 {backgroundColor: driverStatus ? colors.hex_f66820 : '#989898'},
               ]}
               onPress={() => {
-                if (confirmDriverStatus) {
-                  setConfirmDriverStatus(false);
-                  setDriverStatus(true);
-                } else {
-                  setConfirmDriverStatus(true);
-                }
+                // if (confirmDriverStatus) {
+                //   setConfirmDriverStatus(false);
+                //   setDriverStatus(true);
+                // } else {
+                //   setConfirmDriverStatus(true);
+                // }
               }}
             />
             <CommonBtn
@@ -175,7 +179,7 @@ const MapScreen = ({navigation}) => {
                 styles.btnStyle,
                 {backgroundColor: driverStatus ? '#989898' : colors.hex_f66820},
               ]}
-              onPress={() => setDriverStatus(false)}
+              onPress={ofClickBtn}
             />
           </View>
         </View>

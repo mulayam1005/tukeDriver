@@ -263,10 +263,16 @@ import axios from 'axios';
 
 const MapScreen = ({ navigation }) => {
   const [userData, setUserData] = useContext(UserContext)
-  console.log('userData: ', userData.mobile_No);
+  console.log('userData: ', userData);
   const [driverStatus, setDriverStatus] = useState(false);
   const [confirmDriverStatus, setConfirmDriverStatus] = useState(false);
   const [isOrderExist, setIsOrderExist] = useState(false);
+
+  useEffect(() => {
+    if (userData) {
+      getDriverStatus()
+    }
+  }, [userData])
 
   useEffect(() => {
     if (driverStatus) {
@@ -276,6 +282,26 @@ const MapScreen = ({ navigation }) => {
     };
     return clearTimeout()
   }, [driverStatus]);
+
+  const getDriverStatus = () => {
+    axios
+      .get(`http://tuketuke.azurewebsites.net/api/DriverDetails/GetDriverAvailableOrNot?Driver_MobileNo=${userData.mobile_No}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(({ data }) => {
+        if (data.status == 'Success') {
+          console.log('data.data.isAvailable: ', data.data.isAvailable);
+          setDriverStatus(data.data.isAvailable)
+        };
+      })
+      .catch((err) => {
+        console.log('err: ', err);
+      })
+  }
 
   const updateDriverStatus = (status) => {
     axios.post('http://tuketuke.azurewebsites.net/api/DriverDetails/UpdateDriver_IsAvailable', {

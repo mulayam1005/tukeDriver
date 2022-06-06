@@ -26,7 +26,7 @@ import {showMessage, hideMessage} from 'react-native-flash-message';
 
 const LoginWithPassword = ({navigation}) => {
   const [number, setnumber] = useState('');
-  const [fcId, setfcId] = useState("")
+  const [fcId, setfcId] = useState('');
   const [password, setpassword] = useState('');
   const [isError, setIsError] = useState(false);
   const [isNet, setIsNet] = useState(true);
@@ -36,65 +36,61 @@ const LoginWithPassword = ({navigation}) => {
   const dispatch = useDispatch();
 
   const onConfirmHandler = async () => {
-    try {   
-      const session = await EncryptedStorage.getItem("fcm_id");
-      setfcId(session)
-      if (session !== undefined) {
-          // Congrats! You've just retrieved your first value!
-      }
-  } catch (error) {
-    console.log('error',error)
-  }
-    if (!password || !number) {
-      setIsError(true);
-    } else {
-      const net = await _checkInternet();
-      if (net) {
-        setIsNet(true);
-        dispatch(loader(true));
-        setIsError(false);
-        axios
-          .post('http://tuketuke.azurewebsites.net/api/Login/DriverLogin', {
-            password: password,
-            mobile_No: number,
-            fcM_Id: fcId,
-          })
-          .then(async function (response) {
-            console.log('resonse999', response.data);
-            dispatch(loader(false));
-            if (response.status == 200) {
-              dispatch(loader(false));
-              try {
-                await EncryptedStorage.setItem(
-                  'user_signin',
-                  JSON.stringify({
-                    signData: response.data,
-                  }),
-                );
-              } catch (error) {
-                console.log('error user_signInPassword',error)
-              }
-               navigation.navigate("VehicleScreen")
-            }
-            try {
-              await EncryptedStorage.setItem('user_session', Token);
-            } catch (error) {}
-          })
-          .catch(function (error) {
-            showMessage({
-              message: 'Please enter valid crediential',
-              type: 'danger',
-            });
-            dispatch(loader(false));
-          });
-        dispatch({type: MOBILE_NUMBER, moblieNumber: number});
+    const session = await EncryptedStorage.getItem('fcm_id');
+    const token = JSON.parse(session).fcm_id;
+    if (token) {
+      if (!password || !number) {
+        setIsError(true);
       } else {
-        setIsNet(false);
-        showMessage({
-          message: 'Oops! Check your Internet Connection',
-          type: 'danger',
-        });
+        const net = await _checkInternet();
+        if (net) {
+          setIsNet(true);
+          dispatch(loader(true));
+          setIsError(false);
+          axios
+            .post('http://tuketuke.azurewebsites.net/api/Login/DriverLogin', {
+              password: password,
+              mobile_No: number,
+              fcM_Id: token,
+            })
+            .then(async function (response) {
+              dispatch(loader(false));
+              if (response.status == 200) {
+                dispatch(loader(false));
+                try {
+                  await EncryptedStorage.setItem(
+                    'user_signin',
+                    JSON.stringify({
+                      signData: response.data,
+                    }),
+                  );
+                } catch (error) {
+                  console.log('error user_signInPassword', error);
+                }
+                navigation.navigate('VehicleScreen');
+              }
+              try {
+                await EncryptedStorage.setItem('user_session', Token);
+              } catch (error) {}
+            })
+            .catch(function (error) {
+              showMessage({
+                message: 'Please enter valid crediential',
+                type: 'danger',
+              });
+              dispatch(loader(false));
+            });
+          dispatch({type: MOBILE_NUMBER, moblieNumber: number});
+        } else {
+          setIsNet(false);
+          showMessage({
+            message: 'Oops! Check your Internet Connection',
+            type: 'danger',
+          });
+        }
       }
+    }else{
+      showMessage({message:"something went wrong please try again"})
     }
   };
 

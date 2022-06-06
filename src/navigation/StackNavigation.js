@@ -62,7 +62,7 @@ const StackNavigation = () => {
       userToken = await EncryptedStorage.getItem('user_session');
       const userData = await EncryptedStorage.getItem('@userData');
       if (userToken) {
-        setUserData(JSON.parse(userData));
+        setUserData(JSON.parse(userData).data);
       }
       dispatch({ type: 'RESTORE_TOKEN', token: userToken });
     } catch (error) {

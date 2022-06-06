@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { StyleSheet, Text, View,TouchableOpacity } from 'react-native'
 import { fs, h, w } from '../config';
 import { colors } from '../constants';
 
 
-const NoInternet = () => {
+const NoInternet = (props) => {
     const {onPress} = props;
   return (
     <View style={styles.container}>

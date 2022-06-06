@@ -52,6 +52,7 @@ const OtpScreen = ({navigation, route}) => {
           },
         )
         .then(async function (response) {
+          console.log('response otp screen',response)
           if (response.status == 200) {
             if (response.data.status == 'Success') {
               try {

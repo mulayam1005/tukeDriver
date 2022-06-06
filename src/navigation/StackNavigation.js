@@ -5,9 +5,9 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import React, {useState, createContext, useMemo, useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, { useState, createContext, useMemo, useEffect, useContext } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../screens/splashScreen/index';
 import WelcomeScreen from '../screens/welcomeScreen';
 import LoginScreen from '../screens/loginScreen';
@@ -18,16 +18,18 @@ import VehiclePicture from '../screens/vehiclePicture';
 import ProfileScreen from '../screens/profileScreen';
 import LicenseScreen from '../screens/licenseScreen';
 import MapScreen from '../screens/mapScreen/index';
+import OrderTrackingScreen from '../screens/OrderTrackingScreen';
 import OrderScreen from '../screens/mapScreen/orderScreen';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {AuthContext} from '../utils/context';
-import {useSelector} from 'react-redux';
+import { AuthContext, UserContext } from '../utils/context';
+import { useSelector } from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 const Auth = createNativeStackNavigator();
 
 const StackNavigation = () => {
-  const {loading} = useSelector(state => state.loaderReducer);
+  const [userData, setUserData] = useContext(UserContext)
+  const { loading } = useSelector(state => state.loaderReducer);
 
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
@@ -58,8 +60,11 @@ const StackNavigation = () => {
     var userToken = null;
     try {
       userToken = await EncryptedStorage.getItem('user_session');
-      console.log('userToken:id ', userToken);
-      dispatch({type: 'RESTORE_TOKEN', token: userToken});
+      const userData = await EncryptedStorage.getItem('@userData');
+      if (userToken) {
+        setUserData(JSON.parse(userData));
+      }
+      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
     } catch (error) {
       console.log('error==>>', error);
     }
@@ -68,10 +73,11 @@ const StackNavigation = () => {
   const authContext = useMemo(
     () => ({
       signIn: async res => {
-        console.log('response====>>4', res);
         const token = res.token;
+        setUserData(res.data)
         await EncryptedStorage.setItem('user_session', token);
-        dispatch({type: 'SIGN_IN', token: token});
+        await EncryptedStorage.setItem('@userData', JSON.stringify(res));
+        dispatch({ type: 'SIGN_IN', token: token });
       },
     }),
     [],
@@ -80,7 +86,7 @@ const StackNavigation = () => {
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
           {state.isLoading ? (
             <Auth.Screen name="SplashScreen" component={SplashScreen} />
           ) : state.userToken == null ? (
@@ -99,6 +105,7 @@ const StackNavigation = () => {
           ) : (
             <>
               <Stack.Screen name="MapScreen" component={MapScreen} />
+              <Stack.Screen name="OrderTrackingScreen" component={OrderTrackingScreen} />
               <Stack.Screen name="OrderScreen" component={OrderScreen} />
             </>
           )}

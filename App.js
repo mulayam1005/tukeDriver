@@ -29,12 +29,13 @@ const App = () => {
         .then(async res => {
           try {
             console.log('res', res);
-            await EncryptedStorage.setItem(
+            const fcm =  await EncryptedStorage.setItem(
               'fcm_id',
               JSON.stringify({
                 fcm_id: res,
               }),
             );
+         
           } catch (error) {
             console.log('error', error);
           }

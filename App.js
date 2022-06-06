@@ -1,11 +1,13 @@
-import {StyleSheet, Text, Alert, View,PermissionsAndroid,
-  Platform,} from 'react-native';
-import React, {useEffect} from 'react';
+import {
+  StyleSheet, Text, Alert, View, PermissionsAndroid,
+  Platform,
+} from 'react-native';
+import React, { useEffect } from 'react';
 import StackNavigation from './src/navigation/StackNavigation';
-import {Provider} from 'react-redux';
-import {store} from './src/redux/store/store';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store/store';
 import FlashMessage from 'react-native-flash-message';
-import {ApplicationProvider} from './src/utils/context';
+import { ApplicationProvider, UserProvider } from './src/utils/context';
 import messaging from '@react-native-firebase/messaging';
 import Geolocation from 'react-native-geolocation-service';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -84,10 +86,12 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <ApplicationProvider>
-        <StackNavigation />
-        <FlashMessage position="top" />
-      </ApplicationProvider>
+      <UserProvider>
+        <ApplicationProvider>
+          <StackNavigation />
+          <FlashMessage position="top" />
+        </ApplicationProvider>
+      </UserProvider>
     </Provider>
   );
 };

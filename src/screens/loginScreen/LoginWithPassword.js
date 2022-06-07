@@ -137,7 +137,7 @@ const LoginWithPassword = ({navigation}) => {
               onPress={onConfirmHandler}
               customBtnStyle={{
                 padding: 11,
-                width: 355,
+                width: w(85),
                 backgroundColor: colors.hex_f56725,
               }}
             />
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   confirmBtn: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 320,
+    width: w(85),
     alignSelf: 'center',
     marginTop: 15,
   },

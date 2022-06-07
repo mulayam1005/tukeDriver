@@ -6,16 +6,16 @@ export const ApplicationContext = React.createContext();
 export const ApplicationProvider = props => {
   const [appData, setAppData] = useState({
     id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-    mobile_No: 'string',
-    driver_Photo: 'string',
-    vehicle_Photo: 'string',
-    licences_Photo: 'string',
-    vehicle_Id: 'string',
-    vehicle_No: 'string',
+    mobile_No: '',
+    driver_Photo: '',
+    vehicle_Photo: '',
+    licences_Photo: '',
+    vehicle_Id: '',
+    vehicle_No: '',
     isAvailable: true,
-    vehiclePhotoBase64: 'string',
-    driverPhotoBase64: 'string',
-    licencesPhotoBase64: 'string',
+    vehiclePhotoBase64: '',
+    driverPhotoBase64: '',
+    licencesPhotoBase64: '',
   });
   return (
     <ApplicationContext.Provider value={[appData, setAppData]}>

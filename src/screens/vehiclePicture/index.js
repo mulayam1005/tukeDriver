@@ -4,7 +4,7 @@ import CustomHeader from '../../components/CustomHeader';
 import {fs, h, w} from '../../config';
 import CommonImagePicker from '../../components/CommonImagePicker';
 import {ApplicationContext} from '../../utils/context';
-import {VEHICLE_PHOTO} from '../../redux/constants/type';
+
 
 const VehiclePicture = props => {
   const [appData, setAppData] = useContext(ApplicationContext);
@@ -30,8 +30,8 @@ const VehiclePicture = props => {
         onPress={takeVehicleImageHandler}
         getImage={img => setAppData({...appData, vehicle_Photo: img.path})}
         image={appData.vehicle_Photo}
-         disabled={appData.vehicle_Photo == '' ? true : false }
-         bgColor={appData.vehicle_Photo == '' ? false : true}
+        disabled={appData.vehicle_Photo == '' ? true : false}
+        bgColor={appData.vehicle_Photo == '' ? false : true}
       />
     </View>
   );

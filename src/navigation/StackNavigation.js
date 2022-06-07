@@ -88,9 +88,13 @@ const StackNavigation = () => {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {state.isLoading ? (
+            <>
             <Auth.Screen name="SplashScreen" component={SplashScreen} />
+            
+            </>
           ) : state.userToken == null ? (
             <>
+            <Auth.Screen name="WelcomeScreen" component={WelcomeScreen} />
               <Auth.Screen name="LoginScreen" component={LoginScreen} />
               <Auth.Screen
                 name="LoginWithPassword"

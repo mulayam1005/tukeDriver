@@ -40,7 +40,7 @@ export default CommonInputField;
 const styles = StyleSheet.create({
   inputField: {
     backgroundColor: colors.hex_f2f2f2,
-    height: h(6),
+    height: h(6.7),
     width:w(90),
     alignSelf: 'center',
     paddingLeft:w(4)

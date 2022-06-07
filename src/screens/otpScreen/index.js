@@ -38,13 +38,21 @@ const OtpScreen = ({navigation, route}) => {
     return () => clearInterval(interval);
   };
 
-  const onSubmitOTP = val => {
+  const onSubmitOTP = async (val) => {
     console.log('val: ', val);
+    const session = await EncryptedStorage.getItem('fcm_id');
+    console.log('session===>>', session);
+    const token = JSON.parse(session).fcm_id;
     if (val == loginData.otp) {
-      console.log('rgfgfg');
+       
       axios
-        .get(
-          `http://tuketuke.azurewebsites.net/api/Login/CheckUserDriver?Mobile_No=${mobileNo}`,
+        .post(
+          `http://tuketuke.azurewebsites.net/api/Login/DriverLoginWithOutPassword`,
+          {
+            mobile_No: mobileNo,
+            password: '',
+            fcM_ID: token,
+          },
           {
             headers: {
               'Content-Type': 'application/json',

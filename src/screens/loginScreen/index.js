@@ -30,6 +30,7 @@ const LoginScreen = ({navigation}) => {
         },
       })
         .then(function (response) {
+          console.log('response', response);
           if (response.status == 200) {
             const {data} = response;
 
@@ -50,11 +51,11 @@ const LoginScreen = ({navigation}) => {
           }
         })
         .catch(function (error) {
+          console.log('error', error);
           dispatch(loader(false));
           showMessage({
-            message: 'Phone number not found',
-            description: 'Please enter valid number',
-            type: 'danger',
+            message: error.toString(),
+            type: 'warning',
             style: {padding: 93},
           });
         });
@@ -95,7 +96,7 @@ const LoginScreen = ({navigation}) => {
         onPress={onConfirmHandler}
         customBtnStyle={{
           padding: 12,
-          width: 350,
+          width: w(85),
           backgroundColor: colors.hex_f56725,
         }}
       />

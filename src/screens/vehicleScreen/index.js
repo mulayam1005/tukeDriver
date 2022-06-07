@@ -29,6 +29,7 @@ const VehicleScreen = props => {
     axios
       .get('http://tuketuke.azurewebsites.net/api/VehicleList/VehicleList')
       .then(function (response) {
+        console.log('response-===>>vehicleList', response.data.data);
         dispatch(loader(false));
         setvehicle(response.data.data);
       })
@@ -74,11 +75,9 @@ const VehicleScreen = props => {
                   />
                   <View style={styles.container}>
                     <View>
-                      <Text>{item.vehicle_Weight}</Text>
-                      <Text style={styles.vehicleArea}>
-                        {item.vehicle_length}
-                      </Text>
+                      <Text>{item.vehicle_Type}</Text>
                       <Text>{item.other_Specification}</Text>
+                      <Text>{item.vehicle_Weight}</Text>
                     </View>
                     <View style={{marginLeft: w(5)}}>
                       <Ionicons

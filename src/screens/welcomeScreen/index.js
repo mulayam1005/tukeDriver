@@ -48,15 +48,15 @@ const WelcomeScreen = ({navigation}) => {
       )
         .then(granted => {
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('log1')
+            console.log('log1');
             resolve('granted');
           }
-          
+
           return reject('Location Permission denied');
         })
         .catch(error => {
           console.log('Ask Location permission error: ', error);
-          console.log('log3')
+          console.log('log3');
           return reject(error);
         });
     });

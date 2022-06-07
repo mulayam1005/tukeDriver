@@ -20,7 +20,6 @@ const WelcomeScreen = ({navigation}) => {
   const [notification, setnotification] = useState(false);
   const [location, setlocation] = useState(false);
 
-  console.log('location====>>', location);
 
   useEffect(() => {
     if (location) {
@@ -48,7 +47,6 @@ const WelcomeScreen = ({navigation}) => {
       )
         .then(granted => {
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('log1');
             resolve('granted');
           }
 
@@ -56,7 +54,6 @@ const WelcomeScreen = ({navigation}) => {
         })
         .catch(error => {
           console.log('Ask Location permission error: ', error);
-          console.log('log3');
           return reject(error);
         });
     });

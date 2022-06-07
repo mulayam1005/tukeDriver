@@ -12,7 +12,6 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 
 const OtpScreen = ({navigation, route}) => {
   const {loginData, mobileNo} = route.params;
-  console.log('loginDAta===>>', loginData);
   const {signIn} = useContext(AuthContext);
   const [resendOtp, setresendOtp] = useState(true);
   const [timerCount, setTimer] = useState(60);
@@ -39,9 +38,7 @@ const OtpScreen = ({navigation, route}) => {
   };
 
   const onSubmitOTP = async (val) => {
-    console.log('val: ', val);
     const session = await EncryptedStorage.getItem('fcm_id');
-    console.log('session===>>', session);
     const token = JSON.parse(session).fcm_id;
     if (val == loginData.otp) {
        
@@ -60,7 +57,6 @@ const OtpScreen = ({navigation, route}) => {
           },
         )
         .then(async function (response) {
-          console.log('response otp screen',response)
           if (response.status == 200) {
             if (response.data.status == 'Success') {
               try {

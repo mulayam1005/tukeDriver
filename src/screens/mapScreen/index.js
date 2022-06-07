@@ -263,12 +263,12 @@ import axios from 'axios';
 
 const MapScreen = ({ navigation }) => {
   const [userData, setUserData] = useContext(UserContext)
-  console.log('userData: ', userData);
   const [driverStatus, setDriverStatus] = useState(false);
   const [confirmDriverStatus, setConfirmDriverStatus] = useState(false);
   const [isOrderExist, setIsOrderExist] = useState(false);
 
   useEffect(() => {
+    getOrderDetails()
     if (userData) {
       getDriverStatus()
     }
@@ -294,7 +294,6 @@ const MapScreen = ({ navigation }) => {
       )
       .then(({ data }) => {
         if (data.status == 'Success') {
-          console.log('data.data.isAvailable: ', data.data.isAvailable);
           setDriverStatus(data.data.isAvailable)
         };
       })
@@ -326,6 +325,26 @@ const MapScreen = ({ navigation }) => {
       .catch(function (error) {
         console.log(error);
       });
+  }
+
+  const getOrderDetails = () => {
+    axios
+      .get(`http://tuketuke.azurewebsites.net/api/OrderDetails/GetOrderDetail?Order_No=10051`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(({ data }) => {
+        console.log('data---->>>>orderDetail',data);
+        if (data.status == 'Success') {
+          setDriverStatus(data.data.isAvailable)
+        };
+      })
+      .catch((err) => {
+        console.log('err: ', err);
+      })
   }
 
   return (
@@ -433,8 +452,7 @@ const MapScreen = ({ navigation }) => {
               driverStatus ?
                 <TouchableOpacity
                   onPress={() => {
-                    setConfirmDriverStatus(false);
-                    setDriverStatus(false);
+                    updateDriverStatus(false);
                   }}
                   style={{ justifyContent: "center", alignItems: "center", width: w(88), height: h(6) }}>
                   <Text style={{ fontWeight: "bold", color: '#fff' }}>

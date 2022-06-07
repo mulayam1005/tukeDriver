@@ -29,7 +29,6 @@ const VehicleScreen = props => {
     axios
       .get('http://tuketuke.azurewebsites.net/api/VehicleList/VehicleList')
       .then(function (response) {
-        console.log('response-===>>vehicleList', response.data.data);
         dispatch(loader(false));
         setvehicle(response.data.data);
       })
@@ -55,7 +54,6 @@ const VehicleScreen = props => {
           contentContainerStyle={{paddingBottom: h(10)}}
           data={vehicle}
           renderItem={({item, index}) => {
-            console.log('index-===>>', index);
             return (
               <TouchableOpacity
                 onPress={() => {

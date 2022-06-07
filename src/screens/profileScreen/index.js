@@ -59,12 +59,10 @@ const ProfileScreen = props => {
     //     dispatch(loader(false));
     //   });
     const session =await  EncryptedStorage.getItem("user_signin");
-    console.log('session---9999---___>>',session)
     const  data = JSON.parse(session)
     signIn(data.signData)
   };
 
-  console.log('appData======>>>', appData);
 
   return (
     <View style={{backgroundColor: 'lightgrey'}}>

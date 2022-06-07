@@ -13,7 +13,6 @@ const VehiclePicture = props => {
     props.navigation.navigate('LicenseScreen');
   };
 
-  console.log('appData======>>>', appData);
 
   return (
     <View style={styles.container}>

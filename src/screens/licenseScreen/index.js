@@ -9,8 +9,6 @@ const LicenseScreen = props => {
   const [licenseImage, setlicenseImage] = useState('');
   const [appData, setAppData] = useContext(ApplicationContext);
 
-  console.log('appData======>>>', appData);
-
   return (
     <View style={styles.container}>
       <CustomHeader onPress={() => props.navigation.goBack()} />

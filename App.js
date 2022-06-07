@@ -30,8 +30,8 @@ const App = () => {
       messaging()
         .getToken()
         .then(async res => {
+        console.log('fcm: ', res);
           try {
-            console.log('res', res);
             const fcm = await EncryptedStorage.setItem(
               'fcm_id',
               JSON.stringify({
@@ -45,7 +45,6 @@ const App = () => {
         .catch(error => {
           console.log('err', error);
         });
-      console.log('Authorization status:', authStatus);
     }
   }
 

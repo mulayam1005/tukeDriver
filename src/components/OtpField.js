@@ -28,9 +28,7 @@ const OtpField = props => {
         value={value}
         onChangeText={i => {
           setValue(i);
-          console.log('i.length: ', i.length);
           if (i.length == 4) {
-            console.log('i.length: ', i.length);
             onSubmitOTP(i);
           }
         }}

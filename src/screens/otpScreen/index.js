@@ -37,52 +37,52 @@ const OtpScreen = ({navigation, route}) => {
     return () => clearInterval(interval);
   };
 
-  const onSubmitOTP = async (val) => {
+  const onSubmitOTP = async val => {
     const session = await EncryptedStorage.getItem('fcm_id');
-    const token = JSON.parse(session).fcm_id;
-    if (val == loginData.otp) {
-       
-      axios
-        .post(
-          `http://tuketuke.azurewebsites.net/api/Login/DriverLoginWithOutPassword`,
-          {
-            mobile_No: mobileNo,
-            password: '',
-            fcM_ID: token,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
+    if (session) {
+      const token = JSON.parse(session).fcm_id;
+      if (val == loginData.otp) {
+        axios
+          .post(
+            `http://tuketuke.azurewebsites.net/api/Login/DriverLoginWithOutPassword`,
+            {
+              mobile_No: mobileNo,
+              password: '',
+              fcM_ID: token,
             },
-          },
-        )
-        .then(async function (response) {
-          if (response.status == 200) {
-            if (response.data.status == 'Success') {
-              try {
-                await EncryptedStorage.setItem(
-                  'user_signin',
-                  JSON.stringify({
-                    signData: response.data,
-                  }),
-                );
-              } catch (error) {
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+          .then(async function (response) {
+            if (response.status == 200) {
+              if (response.data.status == 'Success') {
+                try {
+                  await EncryptedStorage.setItem(
+                    'user_signin',
+                    JSON.stringify({
+                      signData: response.data,
+                    }),
+                  );
+                } catch (error) {}
+                navigation.navigate('VehicleScreen');
+                dispatch(loader(false));
+              } else {
+                dispatch(loader(false));
               }
-              navigation.navigate('VehicleScreen');
-              dispatch(loader(false));
             } else {
               dispatch(loader(false));
             }
-          } else {
+          })
+          .catch(function (error) {
+            console.log('error: ', error);
             dispatch(loader(false));
-          }
-        })
-        .catch(function (error) {
-          console.log('error: ', error);
-          dispatch(loader(false));
-        });
-    } else {
-      showMessage({message: 'otp not match', type: 'warning'});
+          });
+      } else {
+        showMessage({message: 'otp not match', type: 'warning'});
+      }
     }
   };
 

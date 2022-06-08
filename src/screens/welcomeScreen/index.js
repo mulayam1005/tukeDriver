@@ -86,6 +86,9 @@ const WelcomeScreen = ({navigation}) => {
             disabled={false}
             value={location}
             onValueChange={newValue => setlocation(newValue)}
+            tintColors = {{
+              true: colors.hex_f56725
+            }}
           />
         </View>
       </View>
@@ -108,6 +111,9 @@ const WelcomeScreen = ({navigation}) => {
             disabled={false}
             value={notification}
             onValueChange={newValue => setnotification(newValue)}
+            tintColors = {{
+              true: colors.hex_f56725
+            }}
           />
         </View>
       </View>

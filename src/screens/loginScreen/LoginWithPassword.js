@@ -37,8 +37,8 @@ const LoginWithPassword = ({navigation}) => {
 
   const onConfirmHandler = async () => {
     const session = await EncryptedStorage.getItem('fcm_id');
+    if (session) {
     const token = JSON.parse(session).fcm_id;
-    if (token) {
       if (!password || !number) {
         setIsError(true);
       } else {

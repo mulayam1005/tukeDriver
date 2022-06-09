@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View,SafeAreaView} from 'react-native';
 import React, {useState, useContext} from 'react';
 import CommonImagePicker from '../../components/CommonImagePicker';
 import {fs, h, w} from '../../config';
@@ -10,7 +10,7 @@ const LicenseScreen = props => {
   const [appData, setAppData] = useContext(ApplicationContext);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <CustomHeader onPress={() => props.navigation.goBack()} />
       <Text style={styles.textStyle}>
         {`Take photo of your\nDriving License`}
@@ -29,7 +29,7 @@ const LicenseScreen = props => {
         disabled={appData.licences_Photo == '' ? true : false}
         bgColor={appData.licences_Photo == '' ? false : true}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

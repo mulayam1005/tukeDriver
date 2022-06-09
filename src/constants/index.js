@@ -7,7 +7,7 @@ export const fontfamily = Platform.select({
      myriad_pro_semibold: 'Myriad-Pro-Semibold',
   },
   ios: {
-    myriad_pro_semibold: 'Myriad-Pro-Semibold',
+    // myriad_pro_semibold: 'Myriad-Pro-Semibold',
   },
 });
 

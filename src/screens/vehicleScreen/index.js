@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  SafeAreaView
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -40,7 +41,7 @@ const VehicleScreen = props => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1}}>
       <View style={{marginTop: 13}}>
         <View style={[{marginBottom: 13}, styles.containerHeader]}>
           {/* <CustomHeader  /> */}
@@ -92,7 +93,7 @@ const VehicleScreen = props => {
           }}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -38,6 +38,8 @@ const App = () => {
                 fcm_id: res,
               }),
             );
+           
+            
           } catch (error) {
             console.log('error', error);
           }

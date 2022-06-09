@@ -253,7 +253,7 @@
 // });
 
 import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity,SafeAreaView } from 'react-native';
 import MapView from 'react-native-maps';
 import { fs, h, w } from '../../config';
 import CommonBtn from '../../components/CommonBtn';
@@ -348,7 +348,7 @@ const MapScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={{ backgroundColor: '#fff', flex: 0.2 }}>
       </View>
       <MapView
@@ -502,7 +502,7 @@ const MapScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 export default MapScreen;

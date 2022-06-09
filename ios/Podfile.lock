@@ -427,6 +427,8 @@ PODS:
     - React-jsi (= 0.68.1)
     - React-logger (= 0.68.1)
     - React-perflogger (= 0.68.1)
+  - RNCCheckbox (0.5.12):
+    - React-Core
   - RNFastImage (8.5.11):
     - React-Core
     - SDWebImage (~> 5.11.1)
@@ -525,6 +527,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNCCheckbox (from `../node_modules/@react-native-community/checkbox`)"
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
@@ -637,6 +640,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNCCheckbox:
+    :path: "../node_modules/@react-native-community/checkbox"
   RNFastImage:
     :path: "../node_modules/react-native-fast-image"
   RNFBApp:
@@ -712,6 +717,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 9e344c840176b0af9c84d5019eb4fed8b3c105a1
   React-runtimeexecutor: 7285b499d0339104b2813a1f58ad1ada4adbd6c0
   ReactCommon: bf2888a826ceedf54b99ad1b6182d1bc4a8a3984
+  RNCCheckbox: ed1b4ca295475b41e7251ebae046360a703b6eb5
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNFBApp: b1b5a80a676a07dea17e778bda7c1e8b69b2f5ec
   RNFBMessaging: 3f327c8019ec2578b9da937ba6c01db48c81a457

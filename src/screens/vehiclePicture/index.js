@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View,SafeAreaView} from 'react-native';
 import React, {useState, useContext} from 'react';
 import CustomHeader from '../../components/CustomHeader';
 import {fs, h, w} from '../../config';
@@ -15,7 +15,7 @@ const VehiclePicture = props => {
 
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <CustomHeader onPress={() => props.navigation.goBack()} />
       <Text style={styles.textStyle}>Take photo of your vehicle</Text>
 
@@ -32,7 +32,7 @@ const VehiclePicture = props => {
         disabled={appData.vehicle_Photo == '' ? true : false}
         bgColor={appData.vehicle_Photo == '' ? false : true}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

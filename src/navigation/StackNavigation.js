@@ -64,7 +64,10 @@ const StackNavigation = () => {
       if (userToken) {
         setUserData(JSON.parse(userData).data);
       }
-      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+      setTimeout(() => {
+        dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+      }, 2000);
+
     } catch (error) {
       console.log('error==>>', error);
     }
@@ -89,12 +92,12 @@ const StackNavigation = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {state.isLoading ? (
             <>
-            <Auth.Screen name="SplashScreen" component={SplashScreen} />
-            
+              <Auth.Screen name="SplashScreen" component={SplashScreen} />
+
             </>
           ) : state.userToken == null ? (
             <>
-            <Auth.Screen name="WelcomeScreen" component={WelcomeScreen} />
+              <Auth.Screen name="WelcomeScreen" component={WelcomeScreen} />
               <Auth.Screen name="LoginScreen" component={LoginScreen} />
               <Auth.Screen
                 name="LoginWithPassword"

@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Alert} from 'react-native';
+import {StyleSheet, Text, View, Alert,SafeAreaView} from 'react-native';
 import React, {useState,useContext} from 'react';
 import CustomHeader from '../../components/CustomHeader';
 import {fs, h, w} from '../../config';
@@ -65,7 +65,7 @@ const ProfileScreen = props => {
 
 
   return (
-    <View style={{backgroundColor: 'lightgrey'}}>
+    <SafeAreaView style={{backgroundColor: 'lightgrey'}}>
       <CustomHeader onPress={() => props.navigation.goBack()} />
       <Text style={styles.heading}>Take your profile photo</Text>
       <View style={styles.textStyle}>
@@ -79,7 +79,7 @@ const ProfileScreen = props => {
         bgColor={appData.driver_Photo == '' ? false : true}
         image={appData.driver_Photo}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

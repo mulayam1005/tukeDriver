@@ -1,11 +1,8 @@
 import {
-  StyleSheet,
-  Text,
-  View,
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import React, { useState, createContext, useMemo, useEffect, useContext } from 'react';
+import React, { useMemo, useEffect, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../screens/splashScreen/index';
@@ -19,7 +16,7 @@ import ProfileScreen from '../screens/profileScreen';
 import LicenseScreen from '../screens/licenseScreen';
 import MapScreen from '../screens/mapScreen/index';
 import OrderTrackingScreen from '../screens/OrderTrackingScreen';
-import OrderScreen from '../screens/mapScreen/orderScreen';
+
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { AuthContext, UserContext } from '../utils/context';
 import { useSelector } from 'react-redux';
@@ -68,8 +65,11 @@ const StackNavigation = () => {
         dispatch({ type: 'RESTORE_TOKEN', token: userToken });
       }, 2000);
 
-    } catch (error) {
-      console.log('error==>>', error);
+    } catch (err) {
+      showMessage({
+        message: `${err.response.status} ${err.response.statusText}`,
+        type: 'warning',
+      });
     }
   };
 
@@ -113,7 +113,7 @@ const StackNavigation = () => {
             <>
               <Stack.Screen name="MapScreen" component={MapScreen} />
               <Stack.Screen name="OrderTrackingScreen" component={OrderTrackingScreen} />
-              <Stack.Screen name="OrderScreen" component={OrderScreen} />
+              
             </>
           )}
         </Stack.Navigator>

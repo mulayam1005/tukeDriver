@@ -1,20 +1,11 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-import React, {useEffect, useState, useContext} from 'react';
-import {colors, images} from '../../constants';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import React, {useState, useContext} from 'react';
+import {colors} from '../../constants';
 import CommonInputField from '../../components/CommonInputField';
-import {h, regx, w} from '../../config';
+import {regx, w} from '../../config';
 import CommonBtn from '../../components/CommonBtn';
 import CustomHeader from '../../components/CustomHeader';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {MOBILE_NUMBER} from '../../redux/constants/type';
-import {signin} from '../../redux/actions/signIn';
 import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {AuthContext} from '../../utils/context';
@@ -22,11 +13,10 @@ import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 import {_checkInternet} from '../../utils/internet';
 import NoInternet from '../../components/NoInternet';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+import {showMessage} from 'react-native-flash-message';
 
 const LoginWithPassword = ({navigation}) => {
   const [number, setnumber] = useState('');
-  const [fcId, setfcId] = useState('');
   const [password, setpassword] = useState('');
   const [isError, setIsError] = useState(false);
   const [isNet, setIsNet] = useState(true);
@@ -38,7 +28,7 @@ const LoginWithPassword = ({navigation}) => {
   const onConfirmHandler = async () => {
     const session = await EncryptedStorage.getItem('fcm_id');
     if (session) {
-    const token = JSON.parse(session).fcm_id;
+      const token = JSON.parse(session).fcm_id;
       if (!password || !number) {
         setIsError(true);
       } else {
@@ -57,6 +47,7 @@ const LoginWithPassword = ({navigation}) => {
               dispatch(loader(false));
               if (response.status == 200) {
                 dispatch(loader(false));
+
                 try {
                   await EncryptedStorage.setItem(
                     'user_signin',
@@ -64,19 +55,19 @@ const LoginWithPassword = ({navigation}) => {
                       signData: response.data,
                     }),
                   );
+                  navigation.navigate('VehicleScreen');
                 } catch (error) {
-                  console.log('error user_signInPassword', error);
+                  showMessage({
+                    message: `${error} `,
+                    type: 'warning',
+                  });
                 }
-                navigation.navigate('VehicleScreen');
               }
-              try {
-                await EncryptedStorage.setItem('user_session', Token);
-              } catch (error) {}
             })
             .catch(function (error) {
               showMessage({
-                message: 'Please enter valid crediential',
-                type: 'danger',
+                message: `${error.response.status} ${error.response.statusText}`,
+                type: 'warning',
               });
               dispatch(loader(false));
             });
@@ -89,8 +80,8 @@ const LoginWithPassword = ({navigation}) => {
           });
         }
       }
-    }else{
-      showMessage({message:"something went wrong please try again"})
+    } else {
+      showMessage({message: 'something went wrong please try again'});
     }
   };
 
@@ -107,23 +98,21 @@ const LoginWithPassword = ({navigation}) => {
               placeholder="Enter your phone number"
               value={number}
               onChangeText={data => setnumber(data)}
-              maxLength={10}
-              keyboardType={'numeric'}
+              maxLength={15}
+              keyboardType={'phone-pad'}
               warningTitle={
                 !number
                   ? `Mobile Number is required`
                   : `Please enter your valid mobile number!`
               }
-              warning={
-                !number ? isError : number && !regx.phoneLastTen.test(number)
-              }
+              warning={!number ? isError : false}
             />
             <View style={{marginTop: 22}}>
               <CommonInputField
                 placeholder="Enter your password"
                 value={password}
                 onChangeText={data => setpassword(data)}
-                maxLength={10}
+                maxLength={15}
                 secureTextEntry={true}
                 warningTitle={!password ? `Password is required.` : ``}
                 warning={!password ? isError : password}

@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View, Alert,SafeAreaView} from 'react-native';
-import React, {useState,useContext} from 'react';
+import {StyleSheet, Text, View, Alert, SafeAreaView} from 'react-native';
+import React, {useState, useContext} from 'react';
 import CustomHeader from '../../components/CustomHeader';
 import {fs, h, w} from '../../config';
 import CommonImagePicker from '../../components/CommonImagePicker';
@@ -7,10 +7,9 @@ import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
 import ImgToBase64 from 'react-native-image-base64';
 import {loader} from '../../redux/actions/loader';
-import { ApplicationContext, AuthContext } from '../../utils/context';
+import {ApplicationContext, AuthContext} from '../../utils/context';
 import EncryptedStorage from 'react-native-encrypted-storage';
-
-
+import {showMessage} from 'react-native-flash-message';
 
 const ProfileScreen = props => {
   const [appData, setAppData] = useContext(ApplicationContext);
@@ -18,51 +17,49 @@ const ProfileScreen = props => {
 
   const dispatch = useDispatch();
 
-  const onDoneHandler =async () => {
-    // dispatch(loader(true));
-    // axios
-    //   .post(
-    //     'http://tuketuke.azurewebsites.net/api/DriverDetails/UpdateDriverDetails',
-    //     {
-    //       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-    //       mobile_No: 'string',
-    //       driver_Photo: appData.driver_Photo,
-    //       vehicle_Photo: appData.vehicle_Photo,
-    //       licences_Photo: appData.licences_Photo,
-    //       vehicle_Id: 'string',
-    //       vehicle_No: 'string',
-    //       isAvailable: true,
-    //       vehiclePhotoBase64: 'string',
-    //       driverPhotoBase64: 'string',
-    //       licencesPhotoBase64: 'string',
-    //     },
-    //   )
-    //   .then( async function (response) {
-    //     console.log('response...', response);
-    //     if (response.status == 200) {
-    //       dispatch(loader(false));
-    //       try {   
-    //         const session = await EncryptedStorage.getItem("user_signin");
-    //         console.log('session---9999---___>>',session)
-    //         signIn(session.signData.id)
-    //         if (session !== undefined) {
-    //             // Congrats! You've just retrieved your first value!
-    //         }
-    //     } catch (error) {
-    //         // There was an error on the native side
-    //     }
-    //       // props.navigation.navigate('MapScreen');
-    //     }
-    //   })
-    //   .catch(function (error) {
-    //     console.log('error===>>', error);
-    //     dispatch(loader(false));
-    //   });
-    const session =await  EncryptedStorage.getItem("user_signin");
-    const  data = JSON.parse(session)
-    signIn(data.signData)
+  const onDoneHandler = async () => {
+    axios
+      .post(
+        'http://tuketuke.azurewebsites.net/api/DriverDetails/UpdateDriverDetails',
+        {
+          id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          mobile_No: appData.mobile_No,
+          driver_Photo: appData.driver_Photo,
+          vehicle_Photo: appData.vehicle_Photo,
+          licences_Photo: appData.licences_Photo,
+          vehicle_Id: '1',
+          vehicle_No: '1',
+          isAvailable: true,
+          vehiclePhotoBase64: '',
+          driverPhotoBase64: '',
+          licencesPhotoBase64: '',
+        },
+      )
+      .then(async function (response) {
+        if (response.status == 200) {
+          const {data} = response;
+          if (data.status == 'Success') {
+            dispatch(loader(false));
+            const session = await EncryptedStorage.getItem('user_signin');
+            const sessionData = JSON.parse(session);
+            signIn(sessionData.signData);
+          } else {
+            dispatch(loader(false));
+            showMessage({message: data.message});
+          }
+        }
+      })
+      .catch(function (err) {
+        dispatch(loader(false));
+        showMessage({
+          message: `${err.response.status} ${err.response.statusText}`,
+          type: 'warning',
+        });
+      });
+    // const session = await EncryptedStorage.getItem('user_signin');
+    // const data = JSON.parse(session);
+    // signIn(data.signData);
   };
-
 
   return (
     <SafeAreaView style={{backgroundColor: 'lightgrey'}}>
@@ -74,9 +71,9 @@ const ProfileScreen = props => {
       <CommonImagePicker
         imageStyle={styles.image}
         onPress={onDoneHandler}
-        getImage={img => setAppData({...appData, driver_Photo:img.path})}
-        disabled={appData.driver_Photo == '' ? true : false}
-        bgColor={appData.driver_Photo == '' ? false : true}
+        getImage={img => setAppData({...appData, driver_Photo: img.path})}
+        // disabled={appData.driver_Photo == '' ? true : false}
+        // bgColor={appData.driver_Photo == '' ? false : true}
         image={appData.driver_Photo}
       />
     </SafeAreaView>

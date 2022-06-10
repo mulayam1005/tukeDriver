@@ -17,7 +17,7 @@ const OtpScreen = ({navigation, route}) => {
   const [timerCount, setTimer] = useState(60);
   const dispatch = useDispatch();
   useEffect(() => {
-    showMessage({message:`${loginData.otp} this is the otp for now`})
+    showMessage({message: `${loginData.otp} this is the otp for now`});
     let interval = setInterval(() => {
       setTimer(lastTimerCount => {
         lastTimerCount <= 1 && clearInterval(interval);
@@ -47,7 +47,7 @@ const OtpScreen = ({navigation, route}) => {
           .post(
             `http://tuketuke.azurewebsites.net/api/Login/DriverLoginWithOutPassword`,
             {
-              mobile_No: mobileNo,
+              mobile_No: `${mobileNo}`,
               password: '',
               fcM_ID: token,
             },
@@ -60,14 +60,12 @@ const OtpScreen = ({navigation, route}) => {
           .then(async function (response) {
             if (response.status == 200) {
               if (response.data.status == 'Success') {
-                try {
-                  await EncryptedStorage.setItem(
-                    'user_signin',
-                    JSON.stringify({
-                      signData: response.data,
-                    }),
-                  );
-                } catch (error) {}
+                await EncryptedStorage.setItem(
+                  'user_signin',
+                  JSON.stringify({
+                    signData: response.data,
+                  }),
+                );
                 navigation.navigate('VehicleScreen');
                 dispatch(loader(false));
               } else {
@@ -78,7 +76,10 @@ const OtpScreen = ({navigation, route}) => {
             }
           })
           .catch(function (error) {
-            console.log('error: ', error);
+            showMessage({
+              message: `${error.response.status} ${error.response.statusText}`,
+              type: 'warning',
+            });
             dispatch(loader(false));
           });
       } else {

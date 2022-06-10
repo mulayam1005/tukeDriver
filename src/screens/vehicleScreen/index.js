@@ -14,6 +14,8 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 import {ApplicationContext} from '../../utils/context';
+import { showMessage } from 'react-native-flash-message';
+
 
 const VehicleScreen = props => {
   const [vehicle, setvehicle] = useState('');
@@ -29,13 +31,23 @@ const VehicleScreen = props => {
     dispatch(loader(true));
     axios
       .get('http://tuketuke.azurewebsites.net/api/VehicleList/VehicleList')
-      .then(function (response) {
-        dispatch(loader(false));
-        setvehicle(response.data.data);
+       .then(({data}) => {
+        if (data.status == 'Success') {
+        
+          dispatch(loader(false));
+          setvehicle(data.data);
+        } else {
+          showMessage({
+            message: data.message,
+            type: 'warning',
+          });
+        }
       })
       .catch(function (error) {
-        console.log('error===>>', error);
-
+        showMessage({
+          message: `${error.response.status} ${error.response.statusText}`,
+          type: 'warning',
+        });
         dispatch(loader(false));
       });
   };
@@ -61,7 +73,8 @@ const VehicleScreen = props => {
                   setAppData({
                     ...appData,
                     vehicle_Id: item.id,
-                    vehicle_No: index + 1,
+                    vehicle_No: index ,
+
                   });
                   props.navigation.navigate('VehiclePicture');
                 }}>

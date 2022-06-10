@@ -19,16 +19,17 @@ const LicenseScreen = props => {
         style={
           styles.text2Style
         }>{`Please make sure all the information is accurate\nand the whole driving license is clearly visible in\nthe picture with all 4 corners shown.`}</Text>
-
+      <View style={{marginTop:h(5)}}>
       <CommonImagePicker
         isFilled={true}
         getImage={img => setAppData({...appData, licences_Photo: img.path})}
         onPress={() => props.navigation.navigate('ProfileScreen')}
         imageStyle={styles.image}
         image={appData.licences_Photo}
-        disabled={appData.licences_Photo == '' ? true : false}
-        bgColor={appData.licences_Photo == '' ? false : true}
+        // disabled={appData.licences_Photo == '' ? true : false}
+        // bgColor={appData.licences_Photo == '' ? false : true}
       />
+      </View>
     </SafeAreaView>
   );
 };

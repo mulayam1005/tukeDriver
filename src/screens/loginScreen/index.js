@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState,useContext} from 'react';
 import {colors, images} from '../../constants';
 import CommonInputField from '../../components/CommonInputField';
 import {fs, h, regx, w} from '../../config';
@@ -9,20 +9,24 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 import {showMessage, hideMessage} from 'react-native-flash-message';
+import { ApplicationContext } from '../../utils/context';
+
 
 const LoginScreen = ({navigation}) => {
-  const [number, setnumber] = useState('9874563000');
+  const [number, setnumber] = useState('+919874563000');
   const [isError, setIsError] = useState(false);
+  const [appData, setAppData] = useContext(ApplicationContext);
 
   const dispatch = useDispatch();
 
   const onConfirmHandler = async () => {
-    if (!number) {
+    if (!number) { 
       setIsError(true);
     } else {
       dispatch(loader(true));
+      const ddd = encodeURIComponent('+');
       axios({
-        url: `http://tuketuke.azurewebsites.net/api/Login/SMSNotification?Mobile_No=%2B91${number}`,
+        url: `http://tuketuke.azurewebsites.net/api/Login/SMSNotification?Mobile_No=${ddd}${number}`,
         method: 'post',
         headers: {
           // Accept: 'application/json',
@@ -30,33 +34,37 @@ const LoginScreen = ({navigation}) => {
         },
       })
         .then(function (response) {
-        console.log('response: ', response.data);
+          console.log('response: ', response.data);
           if (response.status == 200) {
             const {data} = response;
 
             if (data.status == 'Success') {
               dispatch(loader(false));
-
+              setAppData({mobile_No:number})
               navigation.navigate('OtpScreen', {
                 loginData: data.data,
                 mobileNo: number,
               });
             } else {
               dispatch(loader(false));
-              alert(data.message);
+              showMessage({
+                message: `${data.message} `,
+                type: 'warning',
+              });
             }
           } else {
             dispatch(loader(false));
-            alert(response.statusText);
+            showMessage({
+              message: `${response.statusText} `,
+              type: 'warning',
+            });
           }
         })
         .catch(function (error) {
-          console.log('error', error);
           dispatch(loader(false));
           showMessage({
-            message: error.toString(),
+            message: `${error.response.status} ${error.response.statusText}`,
             type: 'warning',
-            style: {padding: 93},
           });
         });
     }
@@ -76,16 +84,14 @@ const LoginScreen = ({navigation}) => {
         <CommonInputField
           value={number}
           onChangeText={text => setnumber(text)}
-          maxLength={10}
-          keyboardType={'numeric'}
+          maxLength={15}
+          keyboardType={'phone-pad'}
           warningTitle={
             !number
               ? `Mobile Number is required`
               : `Please enter your valid mobile number!`
           }
-          warning={
-            !number ? isError : number && !regx.phoneLastTen.test(number)
-          }
+          warning={!number ? isError : false}
         />
       </View>
       <Text style={styles.otpSendText}>

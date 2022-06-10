@@ -1,10 +1,6 @@
 import {
   StyleSheet,
-  Text,
   Alert,
-  View,
-  PermissionsAndroid,
-  Platform,
 } from 'react-native';
 import React, {useEffect} from 'react';
 import StackNavigation from './src/navigation/StackNavigation';
@@ -30,7 +26,7 @@ const App = () => {
       messaging()
         .getToken()
         .then(async res => {
-        console.log('fcm: ', res);
+          console.log('fcm: ', res);
           try {
             const fcm = await EncryptedStorage.setItem(
               'fcm_id',
@@ -38,14 +34,18 @@ const App = () => {
                 fcm_id: res,
               }),
             );
-           
-            
-          } catch (error) {
-            console.log('error', error);
+          } catch (err) {
+            showMessage({
+              message: `${err.response.status} ${err.response.statusText}`,
+              type: 'warning',
+            });
           }
         })
         .catch(error => {
-          console.log('err', error);
+          showMessage({
+            message: `${err.response.status} ${err.response.statusText}`,
+            type: 'warning',
+          });
         });
     }
   }
@@ -73,3 +73,5 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({});
+
+

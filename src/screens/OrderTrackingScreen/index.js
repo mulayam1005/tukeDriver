@@ -78,8 +78,7 @@ import MapView, {Marker, AnimatedRegion} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Loader from '../../components/Loader';
 import Geolocation from 'react-native-geolocation-service';
-import { locationPermission } from '../../utils/helperFunction/locationPermission';
-
+import {locationPermission} from '../../utils/helperFunction/locationPermission';
 
 const screen = Dimensions.get('window');
 const ASPECT_RATIO = screen.width / screen.height;
@@ -87,8 +86,6 @@ const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const OrderTrackingScreen = ({navigation}) => {
-
-  
   const getCurrentLocation = () =>
     new Promise((resolve, reject) => {
       Geolocation.getCurrentPosition(
@@ -108,8 +105,6 @@ const OrderTrackingScreen = ({navigation}) => {
       );
     });
 
-  
-
   const mapRef = useRef();
   const markerRef = useRef();
 
@@ -119,8 +114,8 @@ const OrderTrackingScreen = ({navigation}) => {
       longitude: 77.1025,
     },
     destinationCords: {
-      latitude: 22.7377,
-      longitude:75.8788,
+      latitude: 22.6111,
+      longitude: 75.6773,
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     },
@@ -148,7 +143,7 @@ const OrderTrackingScreen = ({navigation}) => {
   const updateState = data => setState(state => ({...state, ...data}));
 
   useEffect(() => {
-     getLiveLocation();
+    getLiveLocation();
   }, []);
 
   const getLiveLocation = async () => {
@@ -214,6 +209,7 @@ const OrderTrackingScreen = ({navigation}) => {
       )}
       <View style={{flex: 1}}>
         <MapView
+           
           ref={mapRef}
           style={StyleSheet.absoluteFill}
           initialRegion={{
@@ -228,6 +224,9 @@ const OrderTrackingScreen = ({navigation}) => {
                 width: 40,
                 height: 40,
                 transform: [{rotate: `${heading}deg`}],
+                alignSelf:'center',
+                justifyContent:"center",
+                alignItems:'center'
               }}
               resizeMode="contain"
             />
@@ -240,7 +239,7 @@ const OrderTrackingScreen = ({navigation}) => {
             />
           )}
 
-          {Object.keys(destinationCords).length > 0 && (
+          {/* {Object.keys(destinationCords).length > 0 && ( */}
             <MapViewDirections
               origin={curLoc}
               destination={destinationCords}
@@ -270,7 +269,7 @@ const OrderTrackingScreen = ({navigation}) => {
                 // console.log('GOT AN ERROR');
               }}
             />
-          )}
+          {/* )} */}
         </MapView>
         <TouchableOpacity
           style={{

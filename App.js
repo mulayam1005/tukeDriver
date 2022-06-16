@@ -1,7 +1,4 @@
-import {
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import {StyleSheet, Alert} from 'react-native';
 import React, {useEffect} from 'react';
 import StackNavigation from './src/navigation/StackNavigation';
 import {Provider} from 'react-redux';
@@ -11,11 +8,13 @@ import {ApplicationProvider, UserProvider} from './src/utils/context';
 import messaging from '@react-native-firebase/messaging';
 import Geolocation from 'react-native-geolocation-service';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import * as RootNavigation from './src/navigation/RootNavigation';
 
-const App = () => {
+const App = props => {
   useEffect(() => {
     requestUserPermission();
   }, []);
+
   Geolocation.requestAuthorization('always');
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
@@ -52,7 +51,8 @@ const App = () => {
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      console.log('remoteMessage-===>>', remoteMessage);
+      RootNavigation.navigate('MapScreen', {remoteMessage});
     });
 
     return unsubscribe;
@@ -73,5 +73,3 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({});
-
-

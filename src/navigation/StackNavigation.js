@@ -17,9 +17,11 @@ import LicenseScreen from '../screens/licenseScreen';
 import MapScreen from '../screens/mapScreen/index';
 import OrderTrackingScreen from '../screens/OrderTrackingScreen';
 
+
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { AuthContext, UserContext } from '../utils/context';
 import { useSelector } from 'react-redux';
+import { navigationRef } from './RootNavigation';
 
 const Stack = createNativeStackNavigator();
 const Auth = createNativeStackNavigator();
@@ -88,7 +90,7 @@ const StackNavigation = () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {state.isLoading ? (
             <>

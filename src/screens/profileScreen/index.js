@@ -15,6 +15,9 @@ const ProfileScreen = props => {
   const [appData, setAppData] = useContext(ApplicationContext);
   const {signIn} = useContext(AuthContext);
 
+
+  console.log('appdata in profiscree',appData);
+
   const dispatch = useDispatch();
 
   const onDoneHandler = async () => {
@@ -27,8 +30,8 @@ const ProfileScreen = props => {
           driver_Photo: appData.driver_Photo,
           vehicle_Photo: appData.vehicle_Photo,
           licences_Photo: appData.licences_Photo,
-          vehicle_Id: '1',
-          vehicle_No: '1',
+          vehicle_Id: appData.vehicle_Id,
+          vehicle_No: appData.vehicle_No,
           isAvailable: true,
           vehiclePhotoBase64: '',
           driverPhotoBase64: '',
@@ -36,6 +39,7 @@ const ProfileScreen = props => {
         },
       )
       .then(async function (response) {
+        console.log('response---  >>>.',response.data);
         if (response.status == 200) {
           const {data} = response;
           if (data.status == 'Success') {

@@ -14,13 +14,16 @@ import {UserContext} from '../../utils/context';
 import axios from 'axios';
 import {showMessage} from 'react-native-flash-message';
 
-const MapScreen = ({navigation}) => {
+const MapScreen = (props) => {
+  //  console.log('props....>>',props.route.params.remoteMessage);
+   
   const [userData, setUserData] = useContext(UserContext);
   const [driverStatus, setDriverStatus] = useState(false);
   const [confirmDriverStatus, setConfirmDriverStatus] = useState(false);
   const [isOrderExist, setIsOrderExist] = useState(false);
   const [orderList, setorderList] = useState([]);
   const [orderDetail, setorderDetail] = useState('');
+  const [orderData , setOrderData] = useState("");
 
   useEffect(() => {
     getOrderDetails();
@@ -31,18 +34,17 @@ const MapScreen = ({navigation}) => {
 
   useEffect(() => {
     if (driverStatus) {
-      if (!isOrderExist) {
-        setInterval(() => {
-          // setIsOrderExist(true)
-          getOrder();
-        }, 5000);
-      }
+      // if (!isOrderExist) {
+      //   setInterval(() => {
+      //     // setIsOrderExist(true)
+      //     getOrder();
+      //   }, 5000);
+      // }
     }
     return clearInterval();
   }, [driverStatus]);
 
   const getOrderStatus = (num, status) => {
-    console.log('num', num, status);
     axios
       .post(
         'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateOrderStatus',
@@ -53,11 +55,9 @@ const MapScreen = ({navigation}) => {
         },
       )
       .then(function ({data}) {
-        console.log('getOrderStatus--->>>', data);
-        if (data.data.order_Status == "Order Accepted") {
-          navigation.navigate('OrderTrackingScreen');
-        }else{
-  
+        if (data.data.order_Status == 'Order Accepted') {
+          props.navigation.navigate('OrderTrackingScreen');
+        } else {
         }
       })
       .catch(function (err) {
@@ -80,7 +80,6 @@ const MapScreen = ({navigation}) => {
         },
       )
       .then(({data}) => {
-      
         if (data.status == 'Success') {
           setIsOrderExist(true);
           setorderList(data.data[0]);
@@ -171,7 +170,6 @@ const MapScreen = ({navigation}) => {
         },
       )
       .then(({data}) => {
-        console.log('getOrderDetails---->>', data.data);
         if (data.status == 'Success') {
           setorderDetail(data.data);
           setDriverStatus(data.data.isAvailable);

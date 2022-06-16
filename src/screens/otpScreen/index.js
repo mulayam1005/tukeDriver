@@ -9,6 +9,7 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { cleanSingle } from 'react-native-image-crop-picker';
 
 const OtpScreen = ({navigation, route}) => {
   const {loginData, mobileNo} = route.params;
@@ -42,6 +43,7 @@ const OtpScreen = ({navigation, route}) => {
     const session = await EncryptedStorage.getItem('fcm_id');
     if (session) {
       const token = JSON.parse(session).fcm_id;
+       console.log('token===>>',token);
       if (val == loginData.otp) {
         axios
           .post(

@@ -10,54 +10,67 @@ import MapView from 'react-native-maps';
 import {fs, h, w} from '../../config';
 import CommonBtn from '../../components/CommonBtn';
 import {colors} from '../../constants';
-import {UserContext} from '../../utils/context';
+import {OrderContext, UserContext} from '../../utils/context';
 import axios from 'axios';
 import {showMessage} from 'react-native-flash-message';
+import NotificationController from '../../utils/helperFunction/notificationController';
+import {useIsFocused} from '@react-navigation/native';
 
-const MapScreen = (props) => {
-  //  console.log('props....>>',props.route.params.remoteMessage);
-   
+const MapScreen = props => {
   const [userData, setUserData] = useContext(UserContext);
   const [driverStatus, setDriverStatus] = useState(false);
   const [confirmDriverStatus, setConfirmDriverStatus] = useState(false);
   const [isOrderExist, setIsOrderExist] = useState(false);
   const [orderList, setorderList] = useState([]);
-  const [orderDetail, setorderDetail] = useState('');
-  const [orderData , setOrderData] = useState("");
+  const [orderData, setOrderData] = useContext(OrderContext);
+  const [orderId, setOrderId] = useState(0);
 
   useEffect(() => {
-    getOrderDetails();
+    // getOrderDetails();
+    if (props.route.params) {
+      const {orderId} = props.route.params;
+      console.log('orderId: ', orderId);
+      setOrderId(orderId);
+      getOrderDetails(orderId);
+    }
     if (userData) {
       getDriverStatus();
     }
-  }, [userData]);
+  }, [userData, useIsFocused()]);
 
-  useEffect(() => {
-    if (driverStatus) {
-      // if (!isOrderExist) {
-      //   setInterval(() => {
-      //     // setIsOrderExist(true)
-      //     getOrder();
-      //   }, 5000);
-      // }
-    }
-    return clearInterval();
-  }, [driverStatus]);
+  // useEffect(() => {
+  //   if (driverStatus) {
+  //     // if (!isOrderExist) {
+  //     //   setInterval(() => {
+  //     //     // setIsOrderExist(true)
+  //     //     getOrder();
+  //     //   }, 5000);
+  //     // }
+  //   }
+  //   return clearInterval();
+  // }, [driverStatus]);
 
-  const getOrderStatus = (num, status) => {
+  const updateOrderStatus = (num, status) => {
     axios
       .post(
         'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateOrderStatus',
         {
-          order_No: 10051,
+          order_No: orderData.order_No,
           order_StatuId: num,
           order_Status: status,
+          driver_MobileNo: userData.mobile_No,
         },
       )
       .then(function ({data}) {
-        if (data.data.order_Status == 'Order Accepted') {
-          props.navigation.navigate('OrderTrackingScreen');
-        } else {
+        if (data) {
+          if (data.data.order_Status == 'Order Accepted') {
+            props.navigation.navigate('OrderTrackingScreen', {
+              orderId: orderId,
+            });
+          } else {
+            setOrderData('');
+            setIsOrderExist(false);
+          }
         }
       })
       .catch(function (err) {
@@ -158,11 +171,11 @@ const MapScreen = (props) => {
       });
   };
 
-  const getOrderDetails = () => {
-    let orderNo = 10051;
+  const getOrderDetails = id => {
+    let OrderId = id ? id : orderId;
     axios
       .get(
-        `http://tuketuke.azurewebsites.net/api/OrderDetails/GetOrderDetailbyOrderNo?Order_No=${orderNo}`,
+        `http://tuketuke.azurewebsites.net/api/OrderDetails/GetOrderDetailbyOrderNo?Order_No=${OrderId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -171,8 +184,9 @@ const MapScreen = (props) => {
       )
       .then(({data}) => {
         if (data.status == 'Success') {
-          setorderDetail(data.data);
-          setDriverStatus(data.data.isAvailable);
+          setOrderData(data.data);
+          setIsOrderExist(true);
+          // setDriverStatus(data.data.isAvailable);
         }
       })
       .catch(err => {
@@ -185,6 +199,7 @@ const MapScreen = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <NotificationController navigation={props.navigation} />
       <View style={{backgroundColor: '#fff', flex: 0.2}}></View>
       <MapView
         style={{
@@ -252,7 +267,8 @@ const MapScreen = (props) => {
                     fontSize: fs(14),
                     fontWeight: 'bold',
                   }}>
-                  General Hospital to{' '}
+                  {/* General Hospital to{' '} */}
+                  {`${orderData.pick_Location} ${orderData.pick_Address} to`}
                 </Text>
                 <Text
                   style={{
@@ -260,12 +276,12 @@ const MapScreen = (props) => {
                     fontSize: fs(14),
                     fontWeight: 'bold',
                   }}>
-                  Green Primary school
+                  {`${orderData.destination_Address} ${orderData.destination_Location}`}
                 </Text>
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => getOrderStatus(2, 'Order Accepted')}
+              onPress={() => updateOrderStatus(2, 'Order Accepted')}
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -285,7 +301,7 @@ const MapScreen = (props) => {
             <TouchableOpacity
               onPress={() => {
                 setIsOrderExist(false);
-                getOrderStatus(7, 'Order Canceled');
+                updateOrderStatus(7, 'Order Canceled');
               }}
               style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
               <Text style={{color: '#000'}}>Cancel Order</Text>

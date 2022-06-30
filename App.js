@@ -4,7 +4,11 @@ import StackNavigation from './src/navigation/StackNavigation';
 import {Provider} from 'react-redux';
 import {store} from './src/redux/store/store';
 import FlashMessage from 'react-native-flash-message';
-import {ApplicationProvider, UserProvider} from './src/utils/context';
+import {
+  ApplicationProvider,
+  OrderProvider,
+  UserProvider,
+} from './src/utils/context';
 import messaging from '@react-native-firebase/messaging';
 import Geolocation from 'react-native-geolocation-service';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -49,22 +53,27 @@ const App = props => {
     }
   }
 
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('remoteMessage-===>>', remoteMessage);
-      RootNavigation.navigate('MapScreen', {remoteMessage});
-    });
+  // useEffect(() => {
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     // console.log(
+  //     //   'remoteMessage-===>>',
+  //     //   JSON.parse(remoteMessage.data.Order).OrderId,
+  //     // );
+  //     // RootNavigation.navigate('MapScreen', {remoteMessage});
+  //   });
 
-    return unsubscribe;
-  }, []);
+  //   return unsubscribe;
+  // }, []);
 
   return (
     <Provider store={store}>
       <UserProvider>
-        <ApplicationProvider>
-          <StackNavigation />
-          <FlashMessage position="top" />
-        </ApplicationProvider>
+        <OrderProvider>
+          <ApplicationProvider>
+            <StackNavigation />
+            <FlashMessage position="top" />
+          </ApplicationProvider>
+        </OrderProvider>
       </UserProvider>
     </Provider>
   );

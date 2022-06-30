@@ -1,69 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-// import MapView from 'react-native-maps';
-// import axios from 'axios';
-// import Geolocation from 'react-native-geolocation-service';
-
-// const MapScreen = ({ navigation }) => {
-
-//     useEffect(() => {
-//         const intervalId = setInterval(() => {
-//             setLocation();
-//         }, 1000);
-//         return () => clearInterval(intervalId);
-//     }, []);
-
-//     const setLocation = async () => {
-//         Geolocation.getCurrentPosition(
-//             async (position) => {
-//                 axios.post('http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateDriverLatLngInOrder', {
-//                     "order_No": 10051,
-//                     "driverLat": position.coords.latitude,
-//                     "driverLng": position.coords.longitude
-//                 })
-//                     .then(function (response) {
-//                         console.log(response.data);
-//                     })
-//                     .catch(function (error) {
-//                         console.log(error);
-//                     });
-//             },
-//             (error) => {
-//                 // See error code charts below.
-//                 console.log(error.code, error.message);
-//             },
-//             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-//         );
-//     };
-
-//     return (
-//         <View style={styles.container}>
-//             <MapView
-//                 style={styles.container}
-//                 initialRegion={{
-//                     latitude: 37.78825,
-//                     longitude: -122.4324,
-//                     latitudeDelta: 0.0922,
-//                     longitudeDelta: 0.0421,
-//                 }}
-//                 region={{
-//                     latitude: 37.78825,
-//                     longitude: -122.4324,
-//                     latitudeDelta: 0.0922,
-//                     longitudeDelta: 0.0421,
-//                 }}
-//             />
-//         </View>
-//     );
-// };
-// export default MapScreen;
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1
-//     },
-// })
-
 import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
@@ -79,31 +13,21 @@ import MapViewDirections from 'react-native-maps-directions';
 import Loader from '../../components/Loader';
 import Geolocation from 'react-native-geolocation-service';
 import {locationPermission} from '../../utils/helperFunction/locationPermission';
+import {OrderContext, UserContext} from '../../utils/context';
+import {useContext} from 'react';
+import axios from 'axios';
+import {fs, h, w} from '../../config';
+import {showMessage} from 'react-native-flash-message';
 
 const screen = Dimensions.get('window');
 const ASPECT_RATIO = screen.width / screen.height;
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const OrderTrackingScreen = ({navigation}) => {
-  const getCurrentLocation = () =>
-    new Promise((resolve, reject) => {
-      Geolocation.getCurrentPosition(
-        position => {
-          const cords = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            heading: position?.coords?.heading,
-          };
-
-          resolve(cords);
-        },
-        error => {
-          reject(error.message);
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-    });
+const OrderTrackingScreen = ({navigation, route}) => {
+  const [orderData, setOrderData] = useContext(OrderContext);
+  const [userData, setUserData] = useContext(UserContext);
+  console.log('orderData: ', orderData);
 
   const mapRef = useRef();
   const markerRef = useRef();
@@ -114,8 +38,8 @@ const OrderTrackingScreen = ({navigation}) => {
       longitude: 77.1025,
     },
     destinationCords: {
-      latitude: 22.6111,
-      longitude: 75.6773,
+      latitude: orderData.pick_Late,
+      longitude: orderData.pick_Long,
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     },
@@ -140,10 +64,18 @@ const OrderTrackingScreen = ({navigation}) => {
     coordinate,
     heading,
   } = state;
+
   const updateState = data => setState(state => ({...state, ...data}));
 
   useEffect(() => {
     getLiveLocation();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getLiveLocation();
+    }, 6000);
+    return () => clearInterval(interval);
   }, []);
 
   const getLiveLocation = async () => {
@@ -162,15 +94,28 @@ const OrderTrackingScreen = ({navigation}) => {
           longitudeDelta: LONGITUDE_DELTA,
         }),
       });
+
+      axios
+        .post(
+          'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateDriverLatLngInOrder',
+          {
+            order_No: orderData.order_No,
+            driverLat: latitude,
+            driverLng: longitude,
+          },
+        )
+        .then(function ({data}) {
+          if (data.status == 'Success') {
+            // console.log('location updated', data);
+          } else {
+            console.log('location not updated', data);
+          }
+        })
+        .catch(function (error) {
+          console.log('error', error);
+        });
     }
   };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getLiveLocation();
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
 
   const animate = (latitude, longitude) => {
     const newCoordinate = {latitude, longitude};
@@ -199,17 +144,76 @@ const OrderTrackingScreen = ({navigation}) => {
     });
   };
 
+  const getCurrentLocation = () =>
+    new Promise((resolve, reject) => {
+      Geolocation.getCurrentPosition(
+        position => {
+          const cords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            heading: position?.coords?.heading,
+          };
+
+          resolve(cords);
+        },
+        error => {
+          reject(error.message);
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    });
+
+  const onCancelOrder = (num, status) => {
+    axios
+      .post(
+        'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateOrderStatus',
+        {
+          order_No: orderData.order_No,
+          order_StatuId: num,
+          order_Status: status,
+          driver_MobileNo: userData.mobile_No,
+        },
+      )
+      .then(function ({data}) {
+         console.log(data.data.order_Status)
+        if (data) {
+          if (data.data.order_Status == 'Order Canceled') {
+           
+            navigation.navigate('MapScreen',{
+              isOrderExits : false
+            });
+          } else {
+            // setOrderData('');
+            // setIsOrderExist(false);
+          }
+        }
+      })
+      .catch(function (err) {
+        // showMessage({
+        //   message: `${err.response.status} ${err.response.statusText}`,
+        //   type: 'warning',
+        // });
+      });
+  };
+
   return (
     <View style={styles.container}>
-      {distance !== 0 && time !== 0 && (
-        <View style={{alignItems: 'center', marginVertical: 16}}>
-          <Text>Time left: {time.toFixed(0)} </Text>
-          <Text>Distance left: {distance.toFixed(0)}</Text>
-        </View>
-      )}
+      <View
+        style={{
+          marginVertical: 16,
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+        }}>
+        <TouchableOpacity
+          style={{}}
+          onPress={() => onCancelOrder(7, 'Order Canceled')}>
+          <View style={{padding: w(2)}}>
+            <Text>Cancel order</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
       <View style={{flex: 1}}>
         <MapView
-           
           ref={mapRef}
           style={StyleSheet.absoluteFill}
           initialRegion={{
@@ -219,14 +223,14 @@ const OrderTrackingScreen = ({navigation}) => {
           }}>
           <Marker.Animated ref={markerRef} coordinate={coordinate}>
             <Image
-              source={require('../../assets/images/bike.png')}
+              source={require('../../assets/images/bike.jpg')}
               style={{
                 width: 40,
                 height: 40,
                 transform: [{rotate: `${heading}deg`}],
-                alignSelf:'center',
-                justifyContent:"center",
-                alignItems:'center'
+                alignSelf: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
               resizeMode="contain"
             />
@@ -240,35 +244,35 @@ const OrderTrackingScreen = ({navigation}) => {
           )}
 
           {/* {Object.keys(destinationCords).length > 0 && ( */}
-            <MapViewDirections
-              origin={curLoc}
-              destination={destinationCords}
-              apikey={'AIzaSyBzhsIqqHLkDrRiSqt94pxHJCdHHXgA464'}
-              strokeWidth={6}
-              strokeColor="red"
-              optimizeWaypoints={true}
-              onStart={params => {
-                console.log(
-                  `Started routing between "${params.origin}" and "${params.destination}"`,
-                );
-              }}
-              onReady={result => {
-                console.log(`Distance: ${result.distance} km`);
-                console.log(`Duration: ${result.duration} min.`);
-                fetchTime(result.distance, result.duration),
-                  mapRef.current.fitToCoordinates(result.coordinates, {
-                    edgePadding: {
-                      // right: 30,
-                      // bottom: 300,
-                      // left: 30,
-                      // top: 100,
-                    },
-                  });
-              }}
-              onError={errorMessage => {
-                // console.log('GOT AN ERROR');
-              }}
-            />
+          <MapViewDirections
+            origin={curLoc}
+            destination={destinationCords}
+            apikey={'AIzaSyBzhsIqqHLkDrRiSqt94pxHJCdHHXgA464'}
+            strokeWidth={6}
+            strokeColor="red"
+            optimizeWaypoints={true}
+            onStart={params => {
+              console.log(
+                `Started routing between "${params.origin}" and "${params.destination}"`,
+              );
+            }}
+            onReady={result => {
+              console.log(`Distance: ${result.distance} km`);
+              console.log(`Duration: ${result.duration} min.`);
+              fetchTime(result.distance, result.duration),
+                mapRef.current.fitToCoordinates(result.coordinates, {
+                  edgePadding: {
+                    // right: 30,
+                    // bottom: 300,
+                    // left: 30,
+                    // top: 100,
+                  },
+                });
+            }}
+            onError={errorMessage => {
+              // console.log('GOT AN ERROR');
+            }}
+          />
           {/* )} */}
         </MapView>
         <TouchableOpacity

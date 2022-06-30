@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React, {useState,useContext} from 'react';
+import React, {useState,useContext,useRef,useEffect} from 'react';
 import {colors, images} from '../../constants';
 import CommonInputField from '../../components/CommonInputField';
 import {fs, h, regx, w} from '../../config';
@@ -10,14 +10,45 @@ import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 import {showMessage, hideMessage} from 'react-native-flash-message';
 import { ApplicationContext } from '../../utils/context';
-
+import PhoneInput from 'react-native-phone-number-input';
+import Geolocation from 'react-native-geolocation-service';
 
 const LoginScreen = ({navigation}) => {
-  const [number, setnumber] = useState('+919874563000');
+  const [number, setnumber] = useState('9874563000');
   const [isError, setIsError] = useState(false);
+  const [formattedValue, setFormattedValue] = useState('');
+  const [countryCode, setCountryCode] = useState('91');
   const [appData, setAppData] = useContext(ApplicationContext);
+  const [currLoc, setcurrLoc] = useState("")
+  const phoneInput = useRef(null);
 
   const dispatch = useDispatch();
+
+  const getCurrentLocation = () =>
+    new Promise((resolve, reject) => {
+      Geolocation.getCurrentPosition(
+        position => {
+          const cords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            heading: position?.coords?.heading,
+          };
+          setcurrLoc(cords)
+          resolve(cords);
+        },
+        error => {
+          reject(error.message);
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    });
+
+  
+
+    useEffect(() => {
+     getCurrentLocation()
+    }, [])
+    
 
   const onConfirmHandler = async () => {
     if (!number) { 
@@ -26,7 +57,7 @@ const LoginScreen = ({navigation}) => {
       dispatch(loader(true));
       const ddd = encodeURIComponent('+');
       axios({
-        url: `http://tuketuke.azurewebsites.net/api/Login/SMSNotification?Mobile_No=${ddd}${number}`,
+        url: `http://tuketuke.azurewebsites.net/api/Login/SMSNotification?Mobile_No=${ddd}${countryCode}${number}`,
         method: 'post',
         headers: {
           // Accept: 'application/json',
@@ -81,17 +112,34 @@ const LoginScreen = ({navigation}) => {
         <View style={styles.inputFieldContainer}>
           <Text style={styles.fieldName}>Enter your number</Text>
         </View>
-        <CommonInputField
-          value={number}
-          onChangeText={text => setnumber(text)}
-          maxLength={15}
-          keyboardType={'phone-pad'}
-          warningTitle={
-            !number
-              ? `Mobile Number is required`
-              : `Please enter your valid mobile number!`
-          }
-          warning={!number ? isError : false}
+        <PhoneInput
+          ref={phoneInput}
+          defaultValue={number}
+          layout="second"
+          onChangeText={text => {
+            setnumber(text);
+          }}
+          onChangeFormattedText={text => {
+            setFormattedValue(text);
+            setCountryCode(phoneInput.current?.state.code || '');
+          }}
+          countryPickerProps={{withAlphaFilter: true}}
+          // disabled={disabled}
+
+          withDarkTheme
+          withShadow
+          autoFocus
+          containerStyle={{
+            height: h(7),
+            width: w(85),
+            alignSelf: 'center',
+          }}
+          textInputStyle={{
+            height: h(5),
+            marginTop: h(1),
+            marginLeft:w(-3),
+            fontSize: fs(16),
+          }}
         />
       </View>
       <Text style={styles.otpSendText}>

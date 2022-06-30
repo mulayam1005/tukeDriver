@@ -1,8 +1,8 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext,useRef} from 'react';
 import {colors} from '../../constants';
 import CommonInputField from '../../components/CommonInputField';
-import {regx, w} from '../../config';
+import {regx, w,h,fs} from '../../config';
 import CommonBtn from '../../components/CommonBtn';
 import CustomHeader from '../../components/CustomHeader';
 import {MOBILE_NUMBER} from '../../redux/constants/type';
@@ -14,12 +14,16 @@ import {loader} from '../../redux/actions/loader';
 import {_checkInternet} from '../../utils/internet';
 import NoInternet from '../../components/NoInternet';
 import {showMessage} from 'react-native-flash-message';
+import PhoneInput from 'react-native-phone-number-input';
 
 const LoginWithPassword = ({navigation}) => {
   const [number, setnumber] = useState('');
   const [password, setpassword] = useState('');
   const [isError, setIsError] = useState(false);
   const [isNet, setIsNet] = useState(true);
+  const [formattedValue, setFormattedValue] = useState('');
+  const [countryCode, setCountryCode] = useState('');
+  const phoneInput = useRef(null);
 
   const {signIn} = useContext(AuthContext);
 
@@ -94,19 +98,35 @@ const LoginWithPassword = ({navigation}) => {
             <View style={styles.headingView}>
               <Text style={styles.headingText}>Enter your number</Text>
             </View>
-            <CommonInputField
-              placeholder="Enter your phone number"
-              value={number}
-              onChangeText={data => setnumber(data)}
-              maxLength={15}
-              keyboardType={'phone-pad'}
-              warningTitle={
-                !number
-                  ? `Mobile Number is required`
-                  : `Please enter your valid mobile number!`
-              }
-              warning={!number ? isError : false}
-            />
+            <PhoneInput
+          ref={phoneInput}
+          defaultValue={number}
+          layout="second"
+          onChangeText={text => {
+            setnumber(text);
+          }}
+          onChangeFormattedText={text => {
+            setFormattedValue(text);
+            setCountryCode(phoneInput.current?.state.code || '');
+          }}
+          countryPickerProps={{withAlphaFilter: true}}
+          // disabled={disabled}
+
+          withDarkTheme
+          withShadow
+          autoFocus
+          containerStyle={{
+            height: h(7),
+            width: w(90),
+            alignSelf: 'center',
+          }}
+          textInputStyle={{
+            height: h(5),
+            marginTop: h(1),
+            marginLeft:w(-3),
+            fontSize: fs(16),
+          }}
+        />
             <View style={{marginTop: 22}}>
               <CommonInputField
                 placeholder="Enter your password"

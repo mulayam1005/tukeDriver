@@ -31,7 +31,7 @@ const ProfileScreen = props => {
           vehicle_Photo: appData.vehicle_Photo,
           licences_Photo: appData.licences_Photo,
           vehicle_Id: appData.vehicle_Id,
-          vehicle_No: appData.vehicle_No,
+          vehicle_No: "1",
           isAvailable: true,
           vehiclePhotoBase64: '',
           driverPhotoBase64: '',

@@ -33,3 +33,13 @@ export const UserProvider = props => {
     </UserContext.Provider>
   );
 };
+
+export const OrderContext = React.createContext();
+export const OrderProvider = props => {
+  const [orderData, setOrderData] = useState({});
+  return (
+    <OrderContext.Provider value={[orderData, setOrderData]}>
+      {props.children}
+    </OrderContext.Provider>
+  );
+};

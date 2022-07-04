@@ -15,6 +15,9 @@ import axios from 'axios';
 import {showMessage} from 'react-native-flash-message';
 import NotificationController from '../../utils/helperFunction/notificationController';
 import {useIsFocused} from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { loader } from '../../redux/actions/loader';
+import ForegroundHandler from '../../utils/helperFunction/ForegroundHandler';
 
 const MapScreen = props => {
   const [userData, setUserData] = useContext(UserContext);
@@ -24,6 +27,9 @@ const MapScreen = props => {
   const [orderList, setorderList] = useState([]);
   const [orderData, setOrderData] = useContext(OrderContext);
   const [orderId, setOrderId] = useState(0);
+
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // getOrderDetails();
@@ -51,17 +57,21 @@ const MapScreen = props => {
   // }, [driverStatus]);
 
   const updateOrderStatus = (num, status) => {
+    console.log(num,status)
+    dispatch(loader(true));
     axios
       .post(
         'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateOrderStatus',
         {
           order_No: orderData.order_No,
-          order_StatuId: num,
+          order_StatusId: num,
           order_Status: status,
           driver_MobileNo: userData.mobile_No,
         },
       )
       .then(function ({data}) {
+        dispatch(loader(false));
+        console.log('order Accepted data--->>',data)
         if (data) {
           if (data.data.order_Status == 'Order Accepted') {
             props.navigation.navigate('OrderTrackingScreen', {
@@ -75,7 +85,7 @@ const MapScreen = props => {
       })
       .catch(function (err) {
         showMessage({
-          message: `${err.response.status} ${err.response.statusText}`,
+          message: `${err.response.status} ${err.response.statusText} AAA`,
           type: 'warning',
         });
       });
@@ -199,6 +209,7 @@ const MapScreen = props => {
 
   return (
     <SafeAreaView style={styles.container}>
+       <ForegroundHandler />
       <NotificationController navigation={props.navigation} />
       <View style={{backgroundColor: '#fff', flex: 0.2}}></View>
       <MapView
@@ -301,7 +312,7 @@ const MapScreen = props => {
             <TouchableOpacity
               onPress={() => {
                 setIsOrderExist(false);
-                updateOrderStatus(7, 'Order Canceled');
+                updateOrderStatus(8, 'Order Canceled by Driver');
               }}
               style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
               <Text style={{color: '#000'}}>Cancel Order</Text>

@@ -117,17 +117,16 @@ const LoginWithPassword = ({navigation}) => {
           autoFocus
           containerStyle={{
             height: h(7),
-            width: w(90),
+            width: w(85),
             alignSelf: 'center',
           }}
           textInputStyle={{
-            height: h(5),
-            marginTop: h(1),
-            marginLeft:w(-3),
+            height: h(7),
+            marginLeft: w(-3),
             fontSize: fs(16),
           }}
         />
-            <View style={{marginTop: 22}}>
+            {/* <View style={{marginTop: 22}}>
               <CommonInputField
                 placeholder="Enter your password"
                 value={password}
@@ -137,7 +136,7 @@ const LoginWithPassword = ({navigation}) => {
                 warningTitle={!password ? `Password is required.` : ``}
                 warning={!password ? isError : password}
               />
-            </View>
+            </View> */}
           </View>
 
           <View style={{marginTop: 48}}>

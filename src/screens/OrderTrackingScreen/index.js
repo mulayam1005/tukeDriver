@@ -169,15 +169,16 @@ const OrderTrackingScreen = ({navigation, route}) => {
         'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateOrderStatus',
         {
           order_No: orderData.order_No,
-          order_StatuId: num,
+          order_StatusId: num,
           order_Status: status,
           driver_MobileNo: userData.mobile_No,
         },
       )
       .then(function ({data}) {
+        console.log('dataa--->>',data)
          console.log(data.data.order_Status)
         if (data) {
-          if (data.data.order_Status == 'Order Canceled') {
+          if (data.data.order_Status == 'Order Canceled by Driver') {
            
             navigation.navigate('MapScreen',{
               isOrderExits : false
@@ -206,7 +207,7 @@ const OrderTrackingScreen = ({navigation, route}) => {
         }}>
         <TouchableOpacity
           style={{}}
-          onPress={() => onCancelOrder(7, 'Order Canceled')}>
+          onPress={() => onCancelOrder(8, 'Order Canceled by Driver')}>
           <View style={{padding: w(2)}}>
             <Text>Cancel order</Text>
           </View>

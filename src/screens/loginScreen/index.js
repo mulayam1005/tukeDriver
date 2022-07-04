@@ -131,13 +131,12 @@ const LoginScreen = ({navigation}) => {
           autoFocus
           containerStyle={{
             height: h(7),
-            width: w(85),
+            width: w(90),
             alignSelf: 'center',
           }}
           textInputStyle={{
-            height: h(5),
-            marginTop: h(1),
-            marginLeft:w(-3),
+            height: h(7),
+            marginLeft: w(-3),
             fontSize: fs(16),
           }}
         />

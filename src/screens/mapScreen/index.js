@@ -15,9 +15,10 @@ import axios from 'axios';
 import {showMessage} from 'react-native-flash-message';
 import NotificationController from '../../utils/helperFunction/notificationController';
 import {useIsFocused} from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import { loader } from '../../redux/actions/loader';
+import {useDispatch} from 'react-redux';
+import {loader} from '../../redux/actions/loader';
 import ForegroundHandler from '../../utils/helperFunction/ForegroundHandler';
+import PushNotification from 'react-native-push-notification';
 
 const MapScreen = props => {
   const [userData, setUserData] = useContext(UserContext);
@@ -27,7 +28,6 @@ const MapScreen = props => {
   const [orderList, setorderList] = useState([]);
   const [orderData, setOrderData] = useContext(OrderContext);
   const [orderId, setOrderId] = useState(0);
-
 
   const dispatch = useDispatch();
 
@@ -57,7 +57,7 @@ const MapScreen = props => {
   // }, [driverStatus]);
 
   const updateOrderStatus = (num, status) => {
-    console.log(num,status)
+    console.log(num, status);
     dispatch(loader(true));
     axios
       .post(
@@ -71,7 +71,7 @@ const MapScreen = props => {
       )
       .then(function ({data}) {
         dispatch(loader(false));
-        console.log('order Accepted data--->>',data)
+        console.log('order Accepted data--->>', data);
         if (data) {
           if (data.data.order_Status == 'Order Accepted') {
             props.navigation.navigate('OrderTrackingScreen', {
@@ -84,6 +84,7 @@ const MapScreen = props => {
         }
       })
       .catch(function (err) {
+        dispatch(loader(true));
         showMessage({
           message: `${err.response.status} ${err.response.statusText} AAA`,
           type: 'warning',
@@ -209,8 +210,8 @@ const MapScreen = props => {
 
   return (
     <SafeAreaView style={styles.container}>
-       <ForegroundHandler />
-      <NotificationController navigation={props.navigation} />
+      <ForegroundHandler  />
+      <NotificationController navigation={props.navigation}  />
       <View style={{backgroundColor: '#fff', flex: 0.2}}></View>
       <MapView
         style={{
@@ -293,6 +294,7 @@ const MapScreen = props => {
             </View>
             <TouchableOpacity
               onPress={() => updateOrderStatus(2, 'Order Accepted')}
+              //  onPress={() => handleNotification()}
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',

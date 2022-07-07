@@ -71,7 +71,7 @@ const LoginScreen = ({navigation}) => {
 
             if (data.status == 'Success') {
               dispatch(loader(false));
-              setAppData({mobile_No:number})
+              setAppData({...appData,mobile_No:number})
               navigation.navigate('OtpScreen', {
                 loginData: data.data,
                 mobileNo: number,

@@ -26,8 +26,8 @@ const LicenseScreen = props => {
         onPress={() => props.navigation.navigate('ProfileScreen')}
         imageStyle={styles.image}
         image={appData.licences_Photo}
-        // disabled={appData.licences_Photo == '' ? true : false}
-        // bgColor={appData.licences_Photo == '' ? false : true}
+        disabled={appData.licences_Photo == '' ? true : false}
+        bgColor={appData.licences_Photo == '' ? false : true}
       />
       </View>
     </SafeAreaView>

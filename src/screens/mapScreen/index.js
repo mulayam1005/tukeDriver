@@ -44,18 +44,6 @@ const MapScreen = props => {
     }
   }, [userData, useIsFocused()]);
 
-  // useEffect(() => {
-  //   if (driverStatus) {
-  //     // if (!isOrderExist) {
-  //     //   setInterval(() => {
-  //     //     // setIsOrderExist(true)
-  //     //     getOrder();
-  //     //   }, 5000);
-  //     // }
-  //   }
-  //   return clearInterval();
-  // }, [driverStatus]);
-
   const updateOrderStatus = (num, status) => {
     console.log(num, status);
     dispatch(loader(true));
@@ -86,7 +74,7 @@ const MapScreen = props => {
       .catch(function (err) {
         dispatch(loader(true));
         showMessage({
-          message: `${err.response.status} ${err.response.statusText} AAA`,
+          message: `${err.response.status} ${err.response.statusText}`,
           type: 'warning',
         });
       });
@@ -144,7 +132,7 @@ const MapScreen = props => {
       })
       .catch(err => {
         showMessage({
-          message: `${err.response.status} ${err.response.statusText}`,
+          message: `${err.response.status} ${err.response.statusText} `,
           type: 'warning',
         });
       });
@@ -293,8 +281,11 @@ const MapScreen = props => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => updateOrderStatus(2, 'Order Accepted')}
-              //  onPress={() => handleNotification()}
+              onPress={() =>{
+                setIsOrderExist(false)
+                updateOrderStatus(2, 'Order Accepted')}
+              }
+               
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',

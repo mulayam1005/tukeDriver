@@ -18,6 +18,9 @@ import {useContext} from 'react';
 import axios from 'axios';
 import {fs, h, w} from '../../config';
 import {showMessage} from 'react-native-flash-message';
+import { loader } from '../../redux/actions/loader';
+import { useDispatch } from 'react-redux';
+
 
 const screen = Dimensions.get('window');
 const ASPECT_RATIO = screen.width / screen.height;
@@ -31,6 +34,8 @@ const OrderTrackingScreen = ({navigation, route}) => {
 
   const mapRef = useRef();
   const markerRef = useRef();
+
+  const dispatch = useDispatch()
 
   const [state, setState] = useState({
     curLoc: {
@@ -164,6 +169,7 @@ const OrderTrackingScreen = ({navigation, route}) => {
     });
 
   const onCancelOrder = (num, status) => {
+    dispatch(loader(true))
     axios
       .post(
         'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateOrderStatus',
@@ -175,14 +181,13 @@ const OrderTrackingScreen = ({navigation, route}) => {
         },
       )
       .then(function ({data}) {
+        dispatch(loader(false))
         console.log('dataa--->>',data)
          console.log(data.data.order_Status)
         if (data) {
           if (data.data.order_Status == 'Order Canceled by Driver') {
            
-            navigation.navigate('MapScreen',{
-              isOrderExits : false
-            });
+            navigation.push('MapScreen');
           } else {
             // setOrderData('');
             // setIsOrderExist(false);
@@ -190,6 +195,7 @@ const OrderTrackingScreen = ({navigation, route}) => {
         }
       })
       .catch(function (err) {
+        dispatch(loader(false))
         // showMessage({
         //   message: `${err.response.status} ${err.response.statusText}`,
         //   type: 'warning',

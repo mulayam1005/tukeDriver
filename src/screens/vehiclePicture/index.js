@@ -13,7 +13,7 @@ const VehiclePicture = props => {
     props.navigation.navigate('LicenseScreen');
   };
 
-  console.log('appData----->>>',appData)
+  console.log('appData-----++>>>',appData)
 
 
   return (
@@ -31,8 +31,8 @@ const VehiclePicture = props => {
         onPress={takeVehicleImageHandler}
         getImage={img => setAppData({...appData, vehicle_Photo: img.path})}
         image={appData.vehicle_Photo}
-        disabled={appData.vehicle_Photo == '' ? true : false}
-        bgColor={appData.vehicle_Photo == '' ? true : false}
+        disabled={appData.vehicle_Photo === '' ? true : false}
+        bgColor={appData.vehicle_Photo === '' ? false : true}
       />
     </SafeAreaView>
   );

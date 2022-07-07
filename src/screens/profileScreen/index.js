@@ -76,8 +76,8 @@ const ProfileScreen = props => {
         imageStyle={styles.image}
         onPress={onDoneHandler}
         getImage={img => setAppData({...appData, driver_Photo: img.path})}
-        // disabled={appData.driver_Photo == '' ? true : false}
-        // bgColor={appData.driver_Photo == '' ? false : true}
+        disabled={appData.driver_Photo == '' ? true : false}
+        bgColor={appData.driver_Photo == '' ? false : true}
         image={appData.driver_Photo}
       />
     </SafeAreaView>

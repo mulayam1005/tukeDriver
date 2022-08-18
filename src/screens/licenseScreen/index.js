@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     marginTop: h(4),
     alignSelf: 'center',
     marginBottom: h(4),
+    color:'#000'
   },
   image: {
     width: w(70),

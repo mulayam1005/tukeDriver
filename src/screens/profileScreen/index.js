@@ -20,57 +20,55 @@ const ProfileScreen = props => {
   const dispatch = useDispatch();
 
   const onDoneHandler = async () => {
-    // let photo = {uri: source.uri};
-    const params={
-      'Id': appData.id,
-      'Mobile_No': appData.mobile_No,
-      'Driver_Photo':appData.driver_Photo,
-      'Vehicle_Photo':appData.vehicle_Photo,
-      'Licences_Photo':appData.licences_Photo,
-      'Vehicle_Id': appData.vehicle_Id,
-      'Vehicle_No':appData.vehicle_No,
-      'IsAvailable':appData.isAvailable,
-      'VehiclePhotoBase64':appData.vehiclePhotoBase64,
-      'DriverPhotoBase64':appData.driverPhotoBase64,
-      'LicencesPhotoBase64':appData.licencesPhotoBase64,
-      'FCM_ID':appData.FCM_ID
-    }
+    dispatch(loader(true));
+    const params = {
+      Id: appData.id,
+      Mobile_No: appData.mobile_No,
+      Driver_Photo: appData.driver_Photo,
+      Vehicle_Photo: appData.vehicle_Photo,
+      Licences_Photo: appData.licences_Photo,
+      Vehicle_Id: appData.vehicle_Id,
+      Vehicle_No: appData.vehicle_No,
+      IsAvailable: appData.isAvailable,
+      VehiclePhotoBase64: appData.vehiclePhotoBase64,
+      DriverPhotoBase64: appData.driverPhotoBase64,
+      LicencesPhotoBase64: appData.licencesPhotoBase64,
+      FCM_ID: appData.FCM_ID,
+    };
     let formdata = new FormData();
- 
-console.log(': ', appData.licences_Photo,
- appData.licences_Photo,
 
- appData.licences_Photo.path.substring(appData.licences_Photo.path.lastIndexOf('/')+1), );
+    console.log(
+      ': ',
+      appData.licences_Photo,
+      appData.licences_Photo,
+
+      appData.licences_Photo.path.substring(
+        appData.licences_Photo.path.lastIndexOf('/') + 1,
+      ),
+    );
     formdata.append('Id', appData.id);
     formdata.append('Mobile_No', appData.mobile_No);
-    // formdata.append('Driver_Photo', {
-    //   uri: appData.driver_Photo,
-    //   name: appData.driver_Photo.split('/').pop(),
-    
-    //   type: appData.driver_Photo.split('.').pop(),
-    // });
-    
-    // formdata.append('Vehicle_Photo', {
-    //   uri: appData.vehicle_Photo,
-    //   name: appData.vehicle_Photo.split('/').pop(),
-    //   type: appData.vehicle_Photo.split('.').pop(),
-    // });
     formdata.append('Driver_Photo', {
       uri: appData.driver_Photo.path,
       type: appData.driver_Photo.mime,
-      name: appData.driver_Photo.path.substring(appData.driver_Photo.path.lastIndexOf('/')+1),
-    
+      name: appData.driver_Photo.path.substring(
+        appData.driver_Photo.path.lastIndexOf('/') + 1,
+      ),
     });
-    
+
     formdata.append('Vehicle_Photo', {
       uri: appData.vehicle_Photo.path,
       type: appData.vehicle_Photo.mime,
-      name: appData.vehicle_Photo.path.substring(appData.vehicle_Photo.path.lastIndexOf('/')+1),
+      name: appData.vehicle_Photo.path.substring(
+        appData.vehicle_Photo.path.lastIndexOf('/') + 1,
+      ),
     });
     formdata.append('Licences_Photo', {
       uri: appData.licences_Photo.path,
       type: appData.licences_Photo.mime,
-      name: appData.licences_Photo.path.substring(appData.licences_Photo.path.lastIndexOf('/')+1),
+      name: appData.licences_Photo.path.substring(
+        appData.licences_Photo.path.lastIndexOf('/') + 1,
+      ),
     });
     formdata.append('Vehicle_Id', appData.vehicle_Id);
     formdata.append('Vehicle_No', appData.vehicle_No);
@@ -78,18 +76,7 @@ console.log(': ', appData.licences_Photo,
     formdata.append('VehiclePhotoBase64', appData.vehiclePhotoBase64);
     formdata.append('DriverPhotoBase64', appData.driverPhotoBase64);
     formdata.append('LicencesPhotoBase64', appData.licencesPhotoBase64);
-    formdata.append('FCM_ID',appData.fcm_id);
-
-
-
-    console.log('params', params);
-    // console.log('formdata: ', formdata);
-  //   console.log('me:: ',
-  //   appData.driver_Photo.split('/').pop()
-  // );
-  // console.log('appData. ', appData.driver_Photo.split('.').pop());
-
-  // console.log('headers: ', headers);
+    formdata.append('FCM_ID', appData.fcm_id);
     axios
       .post(
         'https://tuketuke.com/api/DriverDetails/UpdateDriverDetails',
@@ -97,23 +84,8 @@ console.log(': ', appData.licences_Photo,
         {
           headers: {
             'Content-type': 'multipart/form-data',
-            // accept: 'application/json',
-            },
+          },
         },
-        
-        // {
-          //   id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-          //   mobile_No: appData.mobile_No,
-          //   driver_Photo: appData.driver_Photo,
-          //   vehicle_Photo: appData.vehicle_Photo,
-        //   licences_Photo: appData.licences_Photo,
-        //   vehicle_Id: appData.vehicle_Id,
-        //   vehicle_No: "1",
-        //   isAvailable: true,
-        //   vehiclePhotoBase64: '',
-        //   driverPhotoBase64: '',
-        //   licencesPhotoBase64: '',
-        // },
       )
       .then(async function (response) {
         console.log('response---  >>>.', response.data);
@@ -131,24 +103,24 @@ console.log(': ', appData.licences_Photo,
         }
       })
       .catch(function (err) {
-      console.log('err: ', err);
+        console.log('err: ', err);
         dispatch(loader(false));
         showMessage({
           message: `${err.response.status} ${err.response.statusText}`,
           type: 'warning',
         });
       });
-      // const session = await EncryptedStorage.getItem('user_signin');
-      // const data = JSON.parse(session);
-      // signIn(data.signData);
-    };
+  };
 
   return (
     <SafeAreaView style={{backgroundColor: 'lightgrey'}}>
       <CustomHeader onPress={() => props.navigation.goBack()} />
       <Text style={styles.heading}>Take your profile photo</Text>
       <View style={styles.textStyle}>
-        <Text>{`Your profile photo helps people recognize you\n1. Face the camera directly with your eyes\nand mouth clearly visible\n\n2. Make sure the photo is not dark and is in focus.`}</Text>
+        <Text
+          style={{
+            color: '#000',
+          }}>{`Your profile photo helps people recognize you\n1. Face the camera directly with your eyes\nand mouth clearly visible\n\n2. Make sure the photo is not dark and is in focus.`}</Text>
       </View>
       <CommonImagePicker
         imageStyle={styles.image}
@@ -177,6 +149,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     alignItems: 'center',
     marginBottom: h(4),
+    color: 'red',
   },
   image: {
     width: w(85),

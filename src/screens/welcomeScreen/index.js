@@ -63,10 +63,10 @@ const WelcomeScreen = ({ navigation }) => {
       <Image source={images.commonLogo} style={styles.appLogo} />
       <Text style={styles.heading}>Welcome to Tuketuke</Text>
       <View style={{ marginLeft: w(2) }}>
-        <Text style={{ fontSize: fs(12) }}>
+        <Text style={{ fontSize: fs(12),color:'black' }}>
           By clicking Agree below , you concent to and accept
         </Text>
-        <Text style={{ fontSize: fs(12) }}>our terms and conditions</Text>
+        <Text style={{ fontSize: fs(12),color: 'black', }}>our terms and conditions</Text>
       </View>
 
       <View style={styles.servicesContainer}>
@@ -74,7 +74,7 @@ const WelcomeScreen = ({ navigation }) => {
           <Image source={images.locationLogo} style={styles.horizontalImages} />
         </View>
         <View style={{ flex: 4 }}>
-          <Text style={{ fontSize: 16 }}>Location Services</Text>
+          <Text style={{ fontSize: 16,color: 'black', }}>Location Services</Text>
           <Text
             style={
               styles.locationText
@@ -102,7 +102,7 @@ const WelcomeScreen = ({ navigation }) => {
           />
         </View>
         <View style={{ flex: 4 }}>
-          <Text style={{ fontSize: 16 }}>Notifications</Text>
+          <Text style={{ fontSize: 16,color: '#000', }}>Notifications</Text>
           <Text
             style={
               styles.locationText
@@ -123,7 +123,7 @@ const WelcomeScreen = ({ navigation }) => {
       </View>
       <View style={{ marginTop: '40%' }}>
         <View style={{ marginLeft: 18 }}>
-          <Text style={{ fontSize: 12 }}>
+          <Text style={{ fontSize: 12,color:'#000' }}>
             I have read and accepted your terms and condition
           </Text>
           <TouchableOpacity>
@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
   locationText: {
     marginTop: 2,
     fontSize: fs(11),
+    color: '#000', 
   },
   textStyle: {
     marginTop: 10,

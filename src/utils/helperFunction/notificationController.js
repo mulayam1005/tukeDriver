@@ -28,7 +28,7 @@ const NotificationController = ({navigation}) => {
         navigation.push('MapScreen', {orderId: message.orderid});
       }
     }
-  };
+  }; 
 
   return <View />;
 };

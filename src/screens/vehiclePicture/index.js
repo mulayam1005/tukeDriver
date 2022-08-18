@@ -13,7 +13,6 @@ const VehiclePicture = props => {
     props.navigation.navigate('LicenseScreen');
   };
 
-  console.log('appData-----++>>>',appData)
 
 
   return (
@@ -57,5 +56,6 @@ const styles = StyleSheet.create({
     marginTop: 33,
     alignSelf: 'center',
     marginBottom: h(5),
+    color:'#000'
   },
 });

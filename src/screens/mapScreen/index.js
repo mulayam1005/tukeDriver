@@ -74,8 +74,8 @@ const MapScreen = props => {
       .catch(function (err) {
         dispatch(loader(true));
         showMessage({
-          message: `${err.response.status} ${err.response.statusText}`,
-          type: 'warning',
+          message: `${err.response.status} ${err.response.statusText} this is another error`,
+          type: 'danger',
         });
       });
   };
@@ -132,7 +132,7 @@ const MapScreen = props => {
       })
       .catch(err => {
         showMessage({
-          message: `${err.response.status} ${err.response.statusText} `,
+          message: `${err.response.status} ${err.response.statusText}this is error `,
           type: 'warning',
         });
       });
@@ -174,7 +174,7 @@ const MapScreen = props => {
     let OrderId = id ? id : orderId;
     axios
       .get(
-        `https://tuketuke.com/OrderDetails/GetOrderDetailbyOrderNo?Order_No=${OrderId}`,
+        `https://tuketuke.com/api/OrderDetails/GetOrderDetailbyOrderNo?Order_No=${OrderId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ const MapScreen = props => {
       })
       .catch(err => {
         showMessage({
-          message: `${err.response.status} ${err.response.statusText}`,
+          message: `${err.response.status} ${err.response.statusText} order detail error`,
           type: 'warning',
         });
       });

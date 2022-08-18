@@ -87,9 +87,9 @@ const VehicleScreen = props => {
                   />
                   <View style={styles.container}>
                     <View>
-                      <Text>{item.vehicle_Type}</Text>
-                      <Text>{item.other_Specification}</Text>
-                      <Text>{item.vehicle_Weight}</Text>
+                      <Text style={{color:'#000'}}>{item.vehicle_Type}</Text>
+                      <Text style={{color:'#000'}}>{item.other_Specification}</Text>
+                      <Text style={{color:'#000'}}>{item.vehicle_Weight}</Text>
                     </View>
                     <View style={{marginLeft: w(5)}}>
                       <Ionicons

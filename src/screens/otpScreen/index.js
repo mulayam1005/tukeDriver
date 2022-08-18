@@ -18,7 +18,7 @@ const OtpScreen = ({navigation, route}) => {
   const [timerCount, setTimer] = useState(60);
   const dispatch = useDispatch();
   useEffect(() => {
-    showMessage({message: `${loginData.otp} this is the otp for now`});
+    // showMessage({message: `${loginData.otp} this is the otp for now`});
     let interval = setInterval(() => {
       setTimer(lastTimerCount => {
         lastTimerCount <= 1 && clearInterval(interval);
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 25,
     textAlign: 'center',
+    color:'#000'
   },
   container: {
     flex: 1,
@@ -152,5 +153,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
+    color:'#000'
   },
 });

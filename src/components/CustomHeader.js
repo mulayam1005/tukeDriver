@@ -8,7 +8,7 @@ const CustomHeader = props => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onPress}>
-        <Ionicons name="chevron-back" size={23} />
+        <Ionicons name="chevron-back" size={23} color={"#000"} />
       </TouchableOpacity>
     </View>
   );
@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
      marginTop: h(2),
     marginLeft: w(3),
+   
   },
   titleText: {
     fontSize: fs(18),

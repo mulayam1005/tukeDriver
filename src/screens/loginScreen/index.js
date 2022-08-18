@@ -165,7 +165,7 @@ const LoginScreen = ({navigation}) => {
       />
       <TouchableOpacity
         onPress={() => navigation.navigate('LoginWithPassword')}>
-        <Text style={{textAlign: 'center', marginTop: h(2), fontSize: fs(16)}}>
+        <Text style={{textAlign: 'center', marginTop: h(2), fontSize: fs(16),color:'#000'}}>
           Login with a password{' '}
         </Text>
       </TouchableOpacity>
@@ -202,12 +202,14 @@ const styles = StyleSheet.create({
   fieldName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color:'#000'
   },
   otpSendText: {
     alignSelf: 'center',
     marginTop: 20,
     marginBottom: 25,
     fontSize: 15,
+    color:'#000'
   },
   passwordText: {
     alignSelf: 'center',

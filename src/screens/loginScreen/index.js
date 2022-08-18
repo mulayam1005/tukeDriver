@@ -19,7 +19,7 @@ const LoginScreen = ({navigation}) => {
   const [isError, setIsError] = useState(false);
   const [formattedValue, setFormattedValue] = useState('');
   const [countryCode, setCountryCode] = useState('');
-  console.log('countryCode: ', countryCode);
+  // console.log('countryCode: ', countryCode);
   const [appData, setAppData] = useContext(ApplicationContext);
   const [currLoc, setcurrLoc] = useState("")
   const phoneInput = useRef();

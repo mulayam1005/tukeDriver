@@ -49,7 +49,7 @@ const MapScreen = props => {
     dispatch(loader(true));
     axios
       .post(
-        'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateOrderStatus',
+        'https://tuketuke.com/api/OrderDetails/UpdateOrderStatus',
         {
           order_No: orderData.order_No,
           order_StatusId: num,
@@ -84,7 +84,7 @@ const MapScreen = props => {
     const id = 1;
     axios
       .get(
-        `http://tuketuke.azurewebsites.net/api/OrderDetails/GetOrderListbyStatus?Status_Id=${id}`,
+        `https://tuketuke.com/api/OrderDetails/GetOrderListbyStatus?Status_Id=${id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ const MapScreen = props => {
   const getDriverStatus = () => {
     axios
       .get(
-        `http://tuketuke.azurewebsites.net/api/DriverDetails/GetDriverAvailableOrNot?Driver_MobileNo=${userData.mobile_No}`,
+        `https://tuketuke.com/api/DriverDetails/GetDriverAvailableOrNot?Driver_MobileNo=${userData.mobile_No}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ const MapScreen = props => {
   const updateDriverStatus = status => {
     axios
       .post(
-        'http://tuketuke.azurewebsites.net/api/DriverDetails/UpdateDriver_IsAvailable',
+        'https://tuketuke.com/api/DriverDetails/UpdateDriver_IsAvailable',
         {
           mobile_No: userData.mobile_No,
           isAvailable: status,
@@ -174,7 +174,7 @@ const MapScreen = props => {
     let OrderId = id ? id : orderId;
     axios
       .get(
-        `http://tuketuke.azurewebsites.net/api/OrderDetails/GetOrderDetailbyOrderNo?Order_No=${OrderId}`,
+        `https://tuketuke.com/OrderDetails/GetOrderDetailbyOrderNo?Order_No=${OrderId}`,
         {
           headers: {
             'Content-Type': 'application/json',

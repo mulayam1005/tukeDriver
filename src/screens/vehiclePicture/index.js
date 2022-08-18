@@ -29,7 +29,7 @@ const VehiclePicture = props => {
       <CommonImagePicker
         isFilled={true}
         onPress={takeVehicleImageHandler}
-        getImage={img => setAppData({...appData, vehicle_Photo: img.path})}
+        getImage={img => setAppData({...appData, vehicle_Photo: img})}
         image={appData.vehicle_Photo}
         disabled={appData.vehicle_Photo === '' ? true : false}
         bgColor={appData.vehicle_Photo === '' ? false : true}

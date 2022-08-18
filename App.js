@@ -1,4 +1,4 @@
-import {StyleSheet, Alert} from 'react-native';
+import {StyleSheet, Alert,LogBox} from 'react-native';
 import React, {useEffect} from 'react';
 import StackNavigation from './src/navigation/StackNavigation';
 import {Provider} from 'react-redux';
@@ -17,6 +17,9 @@ import PushNotification from 'react-native-push-notification';
 
 const App = props => {
   useEffect(() => {
+    LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+    LogBox.ignoreAllLogs();
+    requestUserPermission();
     requestUserPermission();
   }, []);
   useEffect(() => {

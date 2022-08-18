@@ -47,7 +47,7 @@ const OtpScreen = ({navigation, route}) => {
       if (val == loginData.otp) {
         axios
           .post(
-            `http://tuketuke.azurewebsites.net/api/Login/DriverLoginWithOutPassword`,
+            `https://tuketuke.com/api/Login/DriverLoginWithOutPassword`,
             {
               mobile_No: `${mobileNo}`,
               password: '',

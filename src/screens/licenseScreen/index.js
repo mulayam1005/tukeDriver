@@ -22,7 +22,7 @@ const LicenseScreen = props => {
       <View style={{marginTop:h(5)}}>
       <CommonImagePicker
         isFilled={true}
-        getImage={img => setAppData({...appData, licences_Photo: img.path})}
+        getImage={img => setAppData({...appData, licences_Photo: img})}
         onPress={() => props.navigation.navigate('ProfileScreen')}
         imageStyle={styles.image}
         image={appData.licences_Photo}

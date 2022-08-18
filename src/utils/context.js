@@ -16,6 +16,7 @@ export const ApplicationProvider = props => {
     vehiclePhotoBase64: '',
     driverPhotoBase64: '',
     licencesPhotoBase64: '',
+    fcm_id:''
   });
   return (
     <ApplicationContext.Provider value={[appData, setAppData]}>

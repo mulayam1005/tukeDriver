@@ -14,13 +14,15 @@ import PhoneInput from 'react-native-phone-number-input';
 import Geolocation from 'react-native-geolocation-service';
 
 const LoginScreen = ({navigation}) => {
-  const [number, setnumber] = useState('9874563000');
+  const [number, setnumber] = useState('');
+  const [value, setValue] = useState('');
   const [isError, setIsError] = useState(false);
   const [formattedValue, setFormattedValue] = useState('');
-  const [countryCode, setCountryCode] = useState('91');
+  const [countryCode, setCountryCode] = useState('');
+  console.log('countryCode: ', countryCode);
   const [appData, setAppData] = useContext(ApplicationContext);
   const [currLoc, setcurrLoc] = useState("")
-  const phoneInput = useRef(null);
+  const phoneInput = useRef();
 
   const dispatch = useDispatch();
 
@@ -56,14 +58,19 @@ const LoginScreen = ({navigation}) => {
     } else {
       dispatch(loader(true));
       const ddd = encodeURIComponent('+');
-      axios({
-        url: `http://tuketuke.azurewebsites.net/api/Login/SMSNotification?Mobile_No=${ddd}${countryCode}${number}`,
-        method: 'post',
-        headers: {
-          // Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      })
+      console.log('number: ', number);
+      axios
+        .post(
+          `https://tuketuke.com/api/Login/SMSNotification`,
+          {
+            mobile_No: formattedValue,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        )
         .then(function (response) {
           console.log('response: ', response.data);
           if (response.status == 200) {
@@ -92,6 +99,7 @@ const LoginScreen = ({navigation}) => {
           }
         })
         .catch(function (error) {
+        console.log('error: ', error);
           dispatch(loader(false));
           showMessage({
             message: `${error.response.status} ${error.response.statusText}`,
@@ -114,12 +122,14 @@ const LoginScreen = ({navigation}) => {
         </View>
         <PhoneInput
           ref={phoneInput}
-          defaultValue={number}
+          defaultValue={value}
+          defaultCode = 'NG'
           layout="second"
           onChangeText={text => {
             setnumber(text);
           }}
           onChangeFormattedText={text => {
+          console.log('text: ', text);
             setFormattedValue(text);
             setCountryCode(phoneInput.current?.state.code || '');
           }}

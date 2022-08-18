@@ -13,14 +13,33 @@ import ProfileScreen from '../screens/profileScreen';
 import LicenseScreen from '../screens/licenseScreen';
 import MapScreen from '../screens/mapScreen/index';
 import OrderTrackingScreen from '../screens/OrderTrackingScreen';
-import EncryptedStorage from 'react-native-encrypted-storage';
-import {AuthContext, OrderContext, UserContext} from '../utils/context';
+
+import {
+  ApplicationContext,
+  AuthContext,
+  OrderContext,
+  UserContext,
+} from '../utils/context';
 import {useSelector} from 'react-redux';
 import {navigationRef} from './RootNavigation';
 import axios from 'axios';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const Stack = createNativeStackNavigator();
 const Auth = createNativeStackNavigator();
+
+// const session = async function retrieveUserSession() {
+// console.log('session: ', session);
+//   try {
+//       const session = await EncryptedStorage.getItem("fcm_id");
+
+//       if (session !== undefined) {
+//           // Congrats! You've just retrieved your first value!
+//       }
+//   } catch (error) {
+//       // There was an error on the native side
+//   }
+// }
 
 const AuthNavigator = () => {
   return (
@@ -89,6 +108,7 @@ const StackNavigation = () => {
       userToken: null,
     },
   );
+  const [appData, setAppData] = useContext(ApplicationContext);
   useEffect(() => {
     tokenUser();
   }, []);
@@ -96,6 +116,8 @@ const StackNavigation = () => {
     var userToken = null;
     try {
       userToken = await EncryptedStorage.getItem('user_session');
+      const session = await EncryptedStorage.getItem('fcm_id');
+      setAppData({...appData,FCM_ID:session})
       const userData = await EncryptedStorage.getItem('@userData');
       if (userToken) {
         setUserData(JSON.parse(userData).data);
@@ -111,7 +133,7 @@ const StackNavigation = () => {
             },
           )
           .then(async function (response) {
-             console.log('response--->>',response.data)
+            console.log('response--->>', response.data);
             if (response.status == 200) {
               if (response.data.status == 'Success') {
                 await setOrderData(response.data.data);

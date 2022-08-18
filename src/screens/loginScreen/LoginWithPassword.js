@@ -22,7 +22,9 @@ const LoginWithPassword = ({navigation}) => {
   const [isError, setIsError] = useState(false);
   const [isNet, setIsNet] = useState(true);
   const [formattedValue, setFormattedValue] = useState('');
+  console.log('formattedValue: ', formattedValue);
   const [countryCode, setCountryCode] = useState('');
+  console.log('countryCode: ', countryCode);
   const phoneInput = useRef(null);
 
   const {signIn} = useContext(AuthContext);
@@ -33,21 +35,26 @@ const LoginWithPassword = ({navigation}) => {
     const session = await EncryptedStorage.getItem('fcm_id');
     if (session) {
       const token = JSON.parse(session).fcm_id;
-      if (!password || !number) {
+      console.log('token: ', token);
+      if (!formattedValue) {
+      // console.log('formattedValue: ', formattedValue);
+      // console.log('password: ', password);
         setIsError(true);
       } else {
         const net = await _checkInternet();
+        console.log('net: ', net);
         if (net) {
           setIsNet(true);
           dispatch(loader(true));
           setIsError(false);
           axios
-            .post('http://tuketuke.azurewebsites.net/api/Login/DriverLogin', {
+            .post('https://tuketuke.com/api/Login/DriverLogin', {
               password: password,
-              mobile_No: number,
+              mobile_No: formattedValue,
               fcM_Id: token,
             })
             .then(async function (response) {
+            console.log('response: ', response);
               dispatch(loader(false));
               if (response.status == 200) {
                 dispatch(loader(false));
@@ -69,6 +76,7 @@ const LoginWithPassword = ({navigation}) => {
               }
             })
             .catch(function (error) {
+            console.log('error: ', error);
               showMessage({
                 message: `${error.response.status} ${error.response.statusText}`,
                 type: 'warning',

@@ -102,7 +102,7 @@ const OrderTrackingScreen = ({navigation, route}) => {
 
       axios
         .post(
-          'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateDriverLatLngInOrder',
+          'https://tuketuke.com/api/OrderDetails/UpdateDriverLatLngInOrder',
           {
             order_No: orderData.order_No,
             driverLat: latitude,
@@ -172,7 +172,7 @@ const OrderTrackingScreen = ({navigation, route}) => {
     dispatch(loader(true))
     axios
       .post(
-        'http://tuketuke.azurewebsites.net/api/OrderDetails/UpdateOrderStatus',
+        'https://tuketuke.com/api/OrderDetails/UpdateOrderStatus',
         {
           order_No: orderData.order_No,
           order_StatusId: num,

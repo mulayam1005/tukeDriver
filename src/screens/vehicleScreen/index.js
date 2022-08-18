@@ -30,7 +30,7 @@ const VehicleScreen = props => {
   const vehicleList = () => {
     dispatch(loader(true));
     axios
-      .get('http://tuketuke.azurewebsites.net/api/VehicleList/VehicleList')
+      .get('https://tuketuke.com/api/VehicleList/VehicleList')
        .then(({data}) => {
         if (data.status == 'Success') {
         
@@ -81,7 +81,7 @@ const VehicleScreen = props => {
                 <View style={styles.horizontalItem}>
                   <Image
                     source={{
-                      uri: `https://driverfiles.blob.core.windows.net/driverfiles/${item.image_Url}`,
+                      uri: `${item.image_Url}`,
                     }}
                     style={styles.imageStyle}
                   />

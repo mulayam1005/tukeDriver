@@ -215,7 +215,7 @@ const OrderTrackingScreen = ({navigation, route}) => {
           style={{}}
           onPress={() => onCancelOrder(8, 'Order Canceled by Driver')}>
           <View style={{padding: w(2)}}>
-            <Text>Cancel order</Text>
+            <Text style={{color:'#000'}} >Cancel order</Text>
           </View>
         </TouchableOpacity>
       </View>

@@ -35,7 +35,7 @@ const MapScreen = props => {
     // getOrderDetails();
     if (props.route.params) {
       const {orderId} = props.route.params;
-      console.log('orderId: ', orderId);
+      // console.log('orderId: ', orderId);
       setOrderId(orderId);
       getOrderDetails(orderId);
     }
@@ -45,7 +45,7 @@ const MapScreen = props => {
   }, [userData, useIsFocused()]);
 
   const updateOrderStatus = (num, status) => {
-    console.log(num, status);
+    console.log("num status",num, status);
     dispatch(loader(true));
     axios
       .post(

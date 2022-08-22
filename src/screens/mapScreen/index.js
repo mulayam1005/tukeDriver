@@ -17,7 +17,7 @@ import NotificationController from '../../utils/helperFunction/notificationContr
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
-import ForegroundHandler from '../../utils/helperFunction/ForegroundHandler';
+// import ForegroundHandler from '../../utils/helperFunction/ForegroundHandler';
 import PushNotification from 'react-native-push-notification';
 
 const MapScreen = props => {
@@ -198,7 +198,7 @@ const MapScreen = props => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ForegroundHandler  />
+      {/* <ForegroundHandler  /> */}
       <NotificationController navigation={props.navigation}  />
       <View style={{backgroundColor: '#fff', flex: 0.2}}></View>
       <MapView

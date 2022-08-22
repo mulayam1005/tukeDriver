@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity,SafeAreaView} from 'react-native';
 import React, {useState, useContext,useRef} from 'react';
 import {colors} from '../../constants';
 import CommonInputField from '../../components/CommonInputField';
@@ -15,6 +15,7 @@ import {_checkInternet} from '../../utils/internet';
 import NoInternet from '../../components/NoInternet';
 import {showMessage} from 'react-native-flash-message';
 import PhoneInput from 'react-native-phone-number-input';
+
 
 const LoginWithPassword = ({navigation}) => {
   const [number, setnumber] = useState('');
@@ -100,7 +101,7 @@ const LoginWithPassword = ({navigation}) => {
   return (
     <>
       {isNet ? (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
           <CustomHeader onPress={() => navigation.goBack()} />
           <View style={{marginTop: 40}}>
             <View style={styles.headingView}>
@@ -166,7 +167,7 @@ const LoginWithPassword = ({navigation}) => {
               <Text style={{fontSize: 16}}>Forgot password</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </SafeAreaView>
       ) : (
         <NoInternet />
       )}

@@ -7,27 +7,98 @@ import {
   ScrollView,
   Platform,
   PermissionsAndroid,
+  Linking,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { colors, images } from '../../constants';
 import CommonBtn from '../../components/CommonBtn';
-import { fs, h, w, width } from '../../config';
+import { fs, h, w } from '../../config';
 import { fontfamily } from '../../constants';
 import Geolocation from 'react-native-geolocation-service';
 import CheckBox from '@react-native-community/checkbox';
+import { showMessage } from 'react-native-flash-message';
+import Permissions, {
+  checkNotifications,
+  PERMISSIONS,
+  RESULTS,
+} from 'react-native-permissions';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import messaging from '@react-native-firebase/messaging';
 
 const WelcomeScreen = ({ navigation }) => {
   const [notification, setnotification] = useState(false);
   const [location, setlocation] = useState(false);
 
+  const checkPermissions = async () => {
+    const permissionStatusAndroid = await Permissions.check(
+      PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+    );
+    const permissionStatusiOS = await Permissions.check(
+      PERMISSIONS.IOS.LOCATION_ALWAYS,
+    );
+    if (Platform.OS == 'android') {
+      permissionStatusAndroid == 'granted'
+        ? setlocation(true)
+        : setlocation(false);
+      permissionStatusAndroid == 'granted' &&
+        navigation.navigate('LoginWithNumber');
+    } else {
+      permissionStatusiOS == 'granted'
+        ? setlocation(true)
+        : setlocation(false);
+      permissionStatusiOS == 'granted' &&
+        navigation.navigate('LoginWithNumber');
+    }
+  };
 
   useEffect(() => {
-    if (location) {
-      locationPermission();
-    }
-  }, [location]);
+    checkPermissions();
+  }, []);
 
-  const locationPermission = () =>
+  async function checkNotificationStatus() {
+    if (Platform.OS === 'ios') {
+      const authStatus = await messaging().hasPermission();
+      if (authStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+        setToken()
+        setnotification(true);
+      } else {
+        setnotification(false);
+      }
+    } else {
+      checkNotifications().then(({ status }) => {
+        if (status === 'granted') {
+          setToken()
+          setnotification(true);
+        } else {
+          setnotification(false);
+        }
+      });
+    }
+  }
+
+  useEffect(() => {
+    checkNotificationStatus();
+  }, []);
+
+  const notificationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      const authStatus = await messaging().hasPermission();
+      if (authStatus === messaging.AuthorizationStatus.NOT_DETERMINED) {
+        const authorizationStatus = await messaging().requestPermission();
+        if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+          setnotification(true);
+        }
+      } else {
+        Linking.openURL('app-settings://')
+        setnotification(!notification);
+      }
+    } else {
+      Linking.openSettings();
+      setnotification(!notification);
+    }
+  };
+
+  const locationPermission = () =>{
     new Promise(async (resolve, reject) => {
       if (Platform.ios === 'ios') {
         try {
@@ -35,38 +106,65 @@ const WelcomeScreen = ({ navigation }) => {
             'whenInUse',
           );
           if (permissionStatus === 'granted') {
+            setlocation(true);
             return resolve('granted');
           }
-          reject('permission not granted');
+          setlocation(false);
+          return reject('permission not granted');
         } catch (error) {
+          setlocation(false);
           return reject(error);
         }
       }
       return PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
       )
         .then(granted => {
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            resolve('granted');
+            setlocation(true);
+            return resolve('granted');
+          } else {
+            setlocation(false);
+            return reject('Location Permission denied');
           }
-
-          return reject('Location Permission denied');
         })
         .catch(error => {
-          console.log('Ask Location permission error: ', error);
+          setlocation(false);
           return reject(error);
         });
     });
+  }
+  const setToken = () => {
+    messaging()
+      .getToken()
+      .then(async res => {
+        try {
+          const fcm = await EncryptedStorage.setItem(
+            'fcm_id',
+            JSON.stringify({
+              fcm_id: res,
+            }),
+          );
+        } catch (error) {
+          console.log('error', error);
+        }
+      })
+      .catch(error => {
+        console.log('err', error);
+      });
+  }
 
   return (
     <ScrollView style={styles.container}>
       <Image source={images.commonLogo} style={styles.appLogo} />
       <Text style={styles.heading}>Welcome to Tuketuke</Text>
       <View style={{ marginLeft: w(2) }}>
-        <Text style={{ fontSize: fs(12),color:'black' }}>
+        <Text style={{ fontSize: fs(12), color:'#000' }}>
           By clicking Agree below , you concent to and accept
         </Text>
-        <Text style={{ fontSize: fs(12),color: 'black', }}>our terms and conditions</Text>
+        <Text style={{ fontSize: fs(12), color:'#000' }}>our terms and conditions</Text>
       </View>
 
       <View style={styles.servicesContainer}>
@@ -74,7 +172,7 @@ const WelcomeScreen = ({ navigation }) => {
           <Image source={images.locationLogo} style={styles.horizontalImages} />
         </View>
         <View style={{ flex: 4 }}>
-          <Text style={{ fontSize: 16,color: 'black', }}>Location Services</Text>
+          <Text style={{ fontSize: 16 , color:'#000'}}>Location Services</Text>
           <Text
             style={
               styles.locationText
@@ -83,14 +181,15 @@ const WelcomeScreen = ({ navigation }) => {
 
         <View style={{ marginTop: h(2) }}>
           <CheckBox
+            tintColors={{ true: colors.hex_f56725 }}
             disabled={false}
             value={location}
-            onValueChange={newValue => setlocation(newValue)}
-            tintColors={{
-              true: colors.hex_f56725
-            }}
-            onTintColor= {colors.hex_f56725}
-            onCheckColor={colors.hex_f56725}
+            onValueChange={newValue => locationPermission(newValue)}
+             onTintColor={colors.hex_f56725}
+            onFillColor={colors.hex_f56725}
+            onCheckColor="white"
+            lineWidth={2}
+            boxType='square'
           />
         </View>
       </View>
@@ -102,28 +201,30 @@ const WelcomeScreen = ({ navigation }) => {
           />
         </View>
         <View style={{ flex: 4 }}>
-          <Text style={{ fontSize: 16,color: '#000', }}>Notifications</Text>
+          <Text style={{ fontSize: 16 , color:'#000' }}>Notifications</Text>
           <Text
             style={
               styles.locationText
-            }>{`Location accuracy allows us to better provide you\nwith more convenient and better services `}</Text>
+            }>{`Mazamaza will like to enable your notification, so we can inform you better`}</Text>
         </View>
         <View style={{ marginTop: h(2) }}>
           <CheckBox
             disabled={false}
             value={notification}
-            onValueChange={newValue => setnotification(newValue)}
-            tintColors={{
-              true: colors.hex_f56725
-            }}
-            onTintColor= {colors.hex_f56725}
-            onCheckColor={colors.hex_f56725}
+            onValueChange={newValue => notificationPermission(newValue)}
+            tintColors={{ true: colors.hex_f56725 }}
+            onTintColor={colors.hex_f56725}
+            onFillColor={colors.hex_f56725}
+            onCheckColor="white"
+            lineWidth={2}
+            boxType='square'
+            
           />
         </View>
       </View>
       <View style={{ marginTop: '40%' }}>
         <View style={{ marginLeft: 18 }}>
-          <Text style={{ fontSize: 12,color:'#000' }}>
+          <Text style={{ fontSize: 12 , color:'#000'}}>
             I have read and accepted your terms and condition
           </Text>
           <TouchableOpacity>
@@ -133,9 +234,10 @@ const WelcomeScreen = ({ navigation }) => {
         <View style={{ marginTop: 10 }}>
           <CommonBtn
             text="Agree"
-            onPress={() => navigation.navigate('LoginScreen')}
+            onPress={() =>
+               navigation.navigate('LoginScreen')
+            }
             bgColor
-            customBtnStyle={{width:w(85),padding:w(3)}}
           />
         </View>
       </View>
@@ -159,7 +261,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 25,
+    padding: 20,
     marginTop: '16%',
   },
   heading: {
@@ -168,7 +270,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 14,
     alignSelf: 'center',
-    fontFamily: Platform.OS == 'android' ? fontfamily.myriad_pro_semibold : null,
+    fontFamily:
+      Platform.OS == 'android' ? fontfamily.myriad_pro_semibold : null,
   },
   servicesContainer: {
     flexDirection: 'row',
@@ -190,8 +293,9 @@ const styles = StyleSheet.create({
   },
   locationText: {
     marginTop: 2,
-    fontSize: fs(11),
-    color: '#000', 
+    fontSize: fs(10),
+    width: h(32),
+    color:'#000'
   },
   textStyle: {
     marginTop: 10,

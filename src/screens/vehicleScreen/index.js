@@ -53,8 +53,8 @@ const VehicleScreen = props => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={{marginTop: 13}}>
+    <SafeAreaView style={{flex: 1,}}>
+      <View style={{marginTop: 13,flex:1}}>
         <View style={[{marginBottom: 13}, styles.containerHeader]}>
           {/* <CustomHeader  /> */}
           <Text style={styles.titleText}>
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
   horizontalLine: {
     borderBottomColor: '#414042',
     borderBottomWidth: 0.5,
+ 
   },
   horizontalItem: {
     width: '100%',
@@ -123,6 +124,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+    
   },
   imageStyle: {
     width: 200,

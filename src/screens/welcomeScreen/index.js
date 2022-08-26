@@ -159,8 +159,8 @@ const WelcomeScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <Image source={images.commonLogo} style={styles.appLogo} />
-      <Text style={styles.heading}>Welcome to Tuketuke</Text>
-      <View style={{ marginLeft: w(2) }}>
+      <Text style={styles.heading}>Welcome to TukeDrive</Text>
+      <View style={{alignSelf:'center' }}>
         <Text style={{ fontSize: fs(12), color:'#000' }}>
           By clicking Agree below , you concent to and accept
         </Text>
@@ -223,7 +223,7 @@ const WelcomeScreen = ({ navigation }) => {
         </View>
       </View>
       <View style={{ marginTop: '40%' }}>
-        <View style={{ marginLeft: 18 }}>
+        <View style={{alignSelf:'center' }}>
           <Text style={{ fontSize: 12 , color:'#000'}}>
             I have read and accepted your terms and condition
           </Text>

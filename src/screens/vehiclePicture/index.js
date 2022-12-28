@@ -13,8 +13,6 @@ const VehiclePicture = props => {
     props.navigation.navigate('LicenseScreen');
   };
 
-
-
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader onPress={() => props.navigation.goBack()} />

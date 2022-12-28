@@ -19,6 +19,7 @@ import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 // import ForegroundHandler from '../../utils/helperFunction/ForegroundHandler';
 import PushNotification from 'react-native-push-notification';
+import Geolocation from 'react-native-geolocation-service';
 
 const MapScreen = props => {
   const [userData, setUserData] = useContext(UserContext);
@@ -28,6 +29,29 @@ const MapScreen = props => {
   const [orderList, setorderList] = useState([]);
   const [orderData, setOrderData] = useContext(OrderContext);
   const [orderId, setOrderId] = useState(0);
+  const [currentLocation, setCurrentLocation] = useState({
+    lat: 0,
+    long: 0,
+  });
+
+  useEffect(() => {
+    Geolocation.getCurrentPosition(
+      position => {
+        setCurrentLocation({
+          lat: JSON.stringify(position.coords.longitude),
+          long: JSON.stringify(position.coords.latitude),
+        });
+      },
+      error => alert(error.message),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000,
+      },
+    );
+  }, [currentLocation]);
+
+  console.log('coordingate', currentLocation);
 
   const dispatch = useDispatch();
 
@@ -45,18 +69,15 @@ const MapScreen = props => {
   }, [userData, useIsFocused()]);
 
   const updateOrderStatus = (num, status) => {
-    console.log("num status",num, status);
+    console.log('num status', num, status);
     dispatch(loader(true));
     axios
-      .post(
-        'https://tuketuke.com/api/OrderDetails/UpdateOrderStatus',
-        {
-          order_No: orderData.order_No,
-          order_StatusId: num,
-          order_Status: status,
-          driver_MobileNo: userData.mobile_No,
-        },
-      )
+      .post('https://tuketuke.com/api/OrderDetails/UpdateOrderStatus', {
+        order_No: orderData.order_No,
+        order_StatusId: num,
+        order_Status: status,
+        driver_MobileNo: userData.mobile_No,
+      })
       .then(function ({data}) {
         dispatch(loader(false));
         console.log('order Accepted data--->>', data);
@@ -140,13 +161,10 @@ const MapScreen = props => {
 
   const updateDriverStatus = status => {
     axios
-      .post(
-        'https://tuketuke.com/api/DriverDetails/UpdateDriver_IsAvailable',
-        {
-          mobile_No: userData.mobile_No,
-          isAvailable: status,
-        },
-      )
+      .post('https://tuketuke.com/api/DriverDetails/UpdateDriver_IsAvailable', {
+        mobile_No: userData.mobile_No,
+        isAvailable: status,
+      })
       .then(function ({data}) {
         if (data.status == 'Success') {
           if (status == false) {
@@ -199,7 +217,7 @@ const MapScreen = props => {
   return (
     <SafeAreaView style={styles.container}>
       {/* <ForegroundHandler  /> */}
-      <NotificationController navigation={props.navigation}  />
+      <NotificationController navigation={props.navigation} />
       <View style={{backgroundColor: '#fff', flex: 0.2}}></View>
       <MapView
         style={{
@@ -213,8 +231,8 @@ const MapScreen = props => {
               : 5.3,
         }} // 5.3
         initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: currentLocation.lat,
+          longitude: currentLocation.long,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -281,11 +299,10 @@ const MapScreen = props => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() =>{
-                setIsOrderExist(false)
-                updateOrderStatus(2, 'Order Accepted')}
-              }
-               
+              onPress={() => {
+                setIsOrderExist(false);
+                updateOrderStatus(2, 'Order Accepted');
+              }}
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',

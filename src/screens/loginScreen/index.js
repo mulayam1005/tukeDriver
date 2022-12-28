@@ -63,7 +63,8 @@ const LoginScreen = ({navigation}) => {
         .post(
           `https://tuketuke.com/api/Login/SMSNotification`,
           {
-            mobile_No: formattedValue,
+            // mobile_No: formattedValue,
+            mobile_No: "+85268135921",
           },
           {
             headers: {

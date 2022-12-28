@@ -205,7 +205,7 @@ const WelcomeScreen = ({ navigation }) => {
           <Text
             style={
               styles.locationText
-            }>{`Mazamaza will like to enable your notification, so we can inform you better`}</Text>
+            }>{`Tuketuke will like to enable your notification, so we can inform you better`}</Text>
         </View>
         <View style={{ marginTop: h(2) }}>
           <CheckBox

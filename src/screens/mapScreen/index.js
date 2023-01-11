@@ -51,7 +51,7 @@ const MapScreen = props => {
     );
   }, [currentLocation]);
 
-  console.log('coordingate', currentLocation);
+ // console.log('coordingate', currentLocation);
 
   const dispatch = useDispatch();
 

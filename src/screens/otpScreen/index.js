@@ -9,14 +9,14 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { cleanSingle } from 'react-native-image-crop-picker';
-
+import {ApplicationContext} from '../../utils/context';
 const OtpScreen = ({navigation, route}) => {
   const {loginData, mobileNo} = route.params;
   const {signIn} = useContext(AuthContext);
   const [resendOtp, setresendOtp] = useState(true);
   const [timerCount, setTimer] = useState(60);
   const dispatch = useDispatch();
+  const [appData, setAppData] = useContext(ApplicationContext);
   useEffect(() => {
     // showMessage({message: `${loginData.otp} this is the otp for now`});
     let interval = setInterval(() => {
@@ -43,13 +43,12 @@ const OtpScreen = ({navigation, route}) => {
     const session = await EncryptedStorage.getItem('fcm_id');
     if (session) {
       const token = JSON.parse(session).fcm_id;
-       console.log('token===>>',token);
       if (val == loginData.otp) {
         axios
           .post(
             `https://tuketuke.com/api/Login/DriverLoginWithOutPassword`,
             {
-              mobile_No: `${mobileNo}`,
+              mobile_No: loginData.mobileNo,
               password: '',
               fcM_ID: token,
             },
@@ -62,6 +61,11 @@ const OtpScreen = ({navigation, route}) => {
           .then(async function (response) {
             if (response.status == 200) {
               if (response.data.status == 'Success') {
+                console.log('id=>', response.data.data.id);
+                setAppData({
+                  ...appData,
+                  id: response.data.data.id,
+                });
                 await EncryptedStorage.setItem(
                   'user_signin',
                   JSON.stringify({
@@ -78,6 +82,7 @@ const OtpScreen = ({navigation, route}) => {
             }
           })
           .catch(function (error) {
+            console.log('eror', error);
             showMessage({
               message: `${error.response.status} ${error.response.statusText}`,
               type: 'warning',
@@ -131,7 +136,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 25,
     textAlign: 'center',
-    color:'#000'
+    color: '#000',
   },
   container: {
     flex: 1,
@@ -153,6 +158,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
-    color:'#000'
+    color: '#000',
   },
 });

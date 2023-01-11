@@ -13,6 +13,7 @@ import {showMessage} from 'react-native-flash-message';
 
 const ProfileScreen = props => {
   const [appData, setAppData] = useContext(ApplicationContext);
+  console.log('appData=>',appData);
   const {signIn} = useContext(AuthContext);
 
   // console.log('appdata in profiscree', appData);
@@ -21,32 +22,10 @@ const ProfileScreen = props => {
 
   const onDoneHandler = async () => {
     dispatch(loader(true));
-    const params = {
-      Id: appData.id,
-      Mobile_No: appData.mobile_No,
-      Driver_Photo: appData.driver_Photo,
-      Vehicle_Photo: appData.vehicle_Photo,
-      Licences_Photo: appData.licences_Photo,
-      Vehicle_Id: appData.vehicle_Id,
-      Vehicle_No: appData.vehicle_No,
-      IsAvailable: appData.isAvailable,
-      VehiclePhotoBase64: appData.vehiclePhotoBase64,
-      DriverPhotoBase64: appData.driverPhotoBase64,
-      LicencesPhotoBase64: appData.licencesPhotoBase64,
-      FCM_ID: appData.FCM_ID,
-    };
     let formdata = new FormData();
-
-    console.log(
-      ': ',
-      appData.licences_Photo,
-      appData.licences_Photo,
-
-      appData.licences_Photo.path.substring(
-        appData.licences_Photo.path.lastIndexOf('/') + 1,
-      ),
-    );
     formdata.append('Id', appData.id);
+    formdata.append('Driver_Name', appData.driver_Name);
+    formdata.append('Licences_No', appData.licences_No);
     formdata.append('Mobile_No', appData.mobile_No);
     formdata.append('Driver_Photo', {
       uri: appData.driver_Photo.path,
@@ -77,6 +56,8 @@ const ProfileScreen = props => {
     formdata.append('DriverPhotoBase64', appData.driverPhotoBase64);
     formdata.append('LicencesPhotoBase64', appData.licencesPhotoBase64);
     formdata.append('FCM_ID', appData.fcm_id);
+    console.log('Driver_Name=>',appData.driver_Name)
+    console.log('Licences_No=>',appData.licences_No)
     axios
       .post(
         'https://tuketuke.com/api/DriverDetails/UpdateDriverDetails',

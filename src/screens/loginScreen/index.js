@@ -1,5 +1,12 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React, {useState,useContext,useRef,useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import React, {useState, useContext, useRef, useEffect} from 'react';
 import {colors, images} from '../../constants';
 import CommonInputField from '../../components/CommonInputField';
 import {fs, h, regx, w} from '../../config';
@@ -9,7 +16,7 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {loader} from '../../redux/actions/loader';
 import {showMessage, hideMessage} from 'react-native-flash-message';
-import { ApplicationContext } from '../../utils/context';
+import {ApplicationContext} from '../../utils/context';
 import PhoneInput from 'react-native-phone-number-input';
 import Geolocation from 'react-native-geolocation-service';
 
@@ -19,10 +26,12 @@ const LoginScreen = ({navigation}) => {
   const [isError, setIsError] = useState(false);
   const [formattedValue, setFormattedValue] = useState('');
   const [countryCode, setCountryCode] = useState('');
-  console.log('countryCode: ', countryCode);
+
   const [appData, setAppData] = useContext(ApplicationContext);
-  const [currLoc, setcurrLoc] = useState("")
+  const [currLoc, setcurrLoc] = useState('');
   const phoneInput = useRef();
+  const [driveName, setDriverName] = useState('');
+  const [licenseData, setLicenseData] = useState('');
 
   const dispatch = useDispatch();
 
@@ -35,7 +44,7 @@ const LoginScreen = ({navigation}) => {
             longitude: position.coords.longitude,
             heading: position?.coords?.heading,
           };
-          setcurrLoc(cords)
+          setcurrLoc(cords);
           resolve(cords);
         },
         error => {
@@ -45,26 +54,23 @@ const LoginScreen = ({navigation}) => {
       );
     });
 
-  
-
-    useEffect(() => {
-     getCurrentLocation()
-    }, [])
-    
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   const onConfirmHandler = async () => {
-    if (!number) { 
+    if (!number) {
       setIsError(true);
     } else {
       dispatch(loader(true));
       const ddd = encodeURIComponent('+');
-      console.log('number: ', number);
+
       axios
         .post(
           `https://tuketuke.com/api/Login/SMSNotification`,
           {
-            // mobile_No: formattedValue,
-            mobile_No: "+85268135921",
+            mobile_No: formattedValue,
+            //  mobile_No: "+85268135921",
           },
           {
             headers: {
@@ -73,17 +79,22 @@ const LoginScreen = ({navigation}) => {
           },
         )
         .then(function (response) {
-          console.log('response: ', response.data);
           if (response.status == 200) {
             const {data} = response;
-
+            console.log('data=>', data);
             if (data.status == 'Success') {
               dispatch(loader(false));
-              setAppData({...appData,mobile_No:number})
+              setAppData({
+                ...appData,
+                mobile_No: data.data.mobileNo,
+                driver_Name: driveName,
+                licences_No: licenseData,
+              });
               navigation.navigate('OtpScreen', {
                 loginData: data.data,
-                mobileNo: number,
+               
               });
+             
             } else {
               dispatch(loader(false));
               showMessage({
@@ -100,7 +111,6 @@ const LoginScreen = ({navigation}) => {
           }
         })
         .catch(function (error) {
-        console.log('error: ', error);
           dispatch(loader(false));
           showMessage({
             message: `${error.response.status} ${error.response.statusText}`,
@@ -113,63 +123,97 @@ const LoginScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <CustomHeader onPress={() => navigation.goBack()} />
-      <View style={{marginTop: 60}}>
-        <View>
-          <Image source={images.commonLogo} style={styles.appLogo} />
-          <Text style={styles.heading}>Login to Tuketuke</Text>
+      <ScrollView>
+        <View style={{marginTop: 60}}>
+          <View>
+            <Image source={images.commonLogo} style={styles.appLogo} />
+            <Text style={styles.heading}>Login to Tuketuke</Text>
+          </View>
+          <View style={styles.inputFieldContainer}>
+            <Text style={styles.fieldName}> Please Enter Driver Details</Text>
+          </View>
         </View>
-        <View style={styles.inputFieldContainer}>
-          <Text style={styles.fieldName}>Enter your number</Text>
-        </View>
-        <PhoneInput
-          ref={phoneInput}
-          defaultValue={value}
-          defaultCode = 'NG'
-          layout="second"
-          onChangeText={text => {
-            setnumber(text);
-          }}
-          onChangeFormattedText={text => {
-          console.log('text: ', text);
-            setFormattedValue(text);
-            setCountryCode(phoneInput.current?.state.code || '');
-          }}
-          countryPickerProps={{withAlphaFilter: true}}
-          // disabled={disabled}
 
-          withDarkTheme
-          withShadow
-          autoFocus
-          containerStyle={{
-            height: h(7),
-            width: w(90),
-            alignSelf: 'center',
-          }}
-          textInputStyle={{
-            height: h(7),
-            marginLeft: w(-3),
-            fontSize: fs(16),
+        <View style={{marginTop: 0}}>
+          <CommonInputField
+            placeholder="Enter Driver Full Name"
+            value={driveName}
+            onChangeText={data => setDriverName(data)}
+            maxLength={15}
+            secureTextEntry={false}
+            warningTitle={!driveName ? `Drive Name is Required.` : ``}
+            warning={!driveName ? isError : driveName}
+          />
+        </View>
+        <View style={{marginTop: 30}}>
+          <CommonInputField
+            placeholder="Enter Driver License Number"
+            value={licenseData}
+            onChangeText={data => setLicenseData(data)}
+            maxLength={15}
+            secureTextEntry={false}
+            warningTitle={!licenseData ? `License Number is Required` : ``}
+            warning={!licenseData ? isError : licenseData}
+          />
+        </View>
+        <View style={{marginTop: 30}}>
+          <PhoneInput
+            ref={phoneInput}
+            defaultValue={value}
+            defaultCode="NG"
+            layout="second"
+            onChangeText={text => {
+              setnumber(text);
+            }}
+            onChangeFormattedText={text => {
+              setFormattedValue(text);
+              setCountryCode(phoneInput.current?.state.code || '');
+            }}
+            countryPickerProps={{withAlphaFilter: true}}
+            // disabled={disabled}
+
+            withDarkTheme
+            withShadow
+            autoFocus
+            containerStyle={{
+              height: h(7),
+              width: w(90),
+              alignSelf: 'center',
+            }}
+            textInputStyle={{
+              height: h(7),
+              marginLeft: w(-3),
+              fontSize: fs(16),
+            }}
+          />
+        </View>
+        <Text style={styles.otpSendText}>
+          We will send you verification to this number
+        </Text>
+        <CommonBtn
+          text="Confirm"
+          onPress={onConfirmHandler}
+          customBtnStyle={{
+            padding: 12,
+            width: w(85),
+            marginTop: 20,
+            backgroundColor: colors.hex_f56725,
           }}
         />
-      </View>
-      <Text style={styles.otpSendText}>
-        We will send you verification to this number
-      </Text>
-      <CommonBtn
-        text="Confirm"
-        onPress={onConfirmHandler}
-        customBtnStyle={{
-          padding: 12,
-          width: w(85),
-          backgroundColor: colors.hex_f56725,
-        }}
-      />
-      <TouchableOpacity
-        onPress={() => navigation.navigate('LoginWithPassword')}>
-        <Text style={{textAlign: 'center', marginTop: h(2), fontSize: fs(16),color:'#000'}}>
-          Login with a password{' '}
-        </Text>
-      </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('LoginWithPassword')}>
+          <Text
+            style={{
+              textAlign: 'center',
+              marginTop: h(2),
+              fontSize: fs(16),
+              color: '#000',
+            }}>
+            Login with a password{' '}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
@@ -203,14 +247,14 @@ const styles = StyleSheet.create({
   fieldName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color:'#000'
+    color: '#000',
   },
   otpSendText: {
     alignSelf: 'center',
     marginTop: 20,
-    marginBottom: 25,
+    marginBottom: 0,
     fontSize: 15,
-    color:'#000'
+    color: '#000',
   },
   passwordText: {
     alignSelf: 'center',
